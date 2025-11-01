@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
+import { LearningPath } from '@/types/agents'
 import {
   BookOpen,
   Brain,
@@ -20,12 +21,9 @@ import {
   Zap
 } from 'lucide-react'
 
-interface LearningPath {
-  id: string
-  title: string
-  description: string
+// Extended LearningPath interface for UI-specific properties
+interface UILearningPath extends LearningPath {
   category: string
-  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert'
   progress: number
   totalModules: number
   completedModules: number
@@ -37,14 +35,13 @@ interface LearningPath {
     type: 'video' | 'reading' | 'exercise' | 'project' | 'quiz'
     duration: number
   }
-  prerequisites: string[]
   isLocked: boolean
   icon: string
   color: string
 }
 
 interface LearningProgressCardProps {
-  paths: LearningPath[]
+  paths: UILearningPath[]
   onPathSelect: (pathId: string) => void
   onContinueLearning: (pathId: string, moduleId: string) => void
   compact?: boolean

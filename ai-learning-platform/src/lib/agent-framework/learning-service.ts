@@ -1,5 +1,5 @@
 // Agent Learning Service - Implementation placeholder
-import { LearningPath, LearningModule } from '@/types/agents'
+import { LearningPath, LearningModule } from '../../types/agents'
 
 export interface LessonProgress {
   lessonId: string

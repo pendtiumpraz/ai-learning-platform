@@ -1,8 +1,8 @@
-import { Agent, AgentExecution, ExecutionStep, ExecutionStatus, AgentTool, PromptConfig } from '../../types/agents';
+import { Agent, AgentExecution, ExecutionStep, ExecutionStatus, AgentTool, PromptConfig, AgentToolImplementation, ExecutionContext, SubTask, AutonomousDecision } from '../../types/agents';
 import { v4 as uuidv4 } from 'uuid';
 
 export class AgentExecutionEngine {
-  private tools: Map<string, any> = new Map();
+  private tools: Map<string, AgentToolImplementation> = new Map();
   private memory: Map<string, any> = new Map();
 
   constructor() {
@@ -86,7 +86,7 @@ export class AgentExecutionEngine {
     return execution;
   }
 
-  private initializeExecutionContext(agent: Agent, input: string, execution: AgentExecution) {
+  private initializeExecutionContext(agent: Agent, input: string, execution: AgentExecution): ExecutionContext {
     return {
       agent,
       input,
@@ -105,7 +105,7 @@ export class AgentExecutionEngine {
     };
   }
 
-  private async executePromptBasedAgent(agent: Agent, context: any) {
+  private async executePromptBasedAgent(agent: Agent, context: ExecutionContext): Promise<void> {
     const systemPrompt = this.getSystemPrompt(agent);
 
     const step = this.createStep('llm_call', 'Processing input with LLM');
@@ -134,7 +134,7 @@ export class AgentExecutionEngine {
     context.execution.steps.push(step);
   }
 
-  private async executeToolUsingAgent(agent: Agent, context: any) {
+  private async executeToolUsingAgent(agent: Agent, context: ExecutionContext): Promise<void> {
     const systemPrompt = this.getSystemPrompt(agent);
 
     let maxIterations = agent.config.execution.maxSteps || 10;
@@ -187,7 +187,7 @@ export class AgentExecutionEngine {
     }
   }
 
-  private async executeMultiAgent(agent: Agent, context: any) {
+  private async executeMultiAgent(agent: Agent, context: ExecutionContext): Promise<void> {
     // Implementation for multi-agent coordination
     const step = this.createStep('multi_agent_coordination', 'Coordinating multiple agents');
     context.steps.push(step);
@@ -221,7 +221,7 @@ export class AgentExecutionEngine {
     context.execution.steps.push(step);
   }
 
-  private async executeWorkflowAgent(agent: Agent, context: any) {
+  private async executeWorkflowAgent(agent: Agent, context: ExecutionContext): Promise<void> {
     // Implementation for workflow-based agents
     const step = this.createStep('workflow_execution', 'Executing workflow');
     context.steps.push(step);
@@ -243,7 +243,7 @@ export class AgentExecutionEngine {
     context.execution.steps.push(step);
   }
 
-  private async executeAutonomousAgent(agent: Agent, context: any) {
+  private async executeAutonomousAgent(agent: Agent, context: ExecutionContext): Promise<void> {
     // Implementation for autonomous agents with decision-making capabilities
     const step = this.createStep('autonomous_execution', 'Running autonomous decision-making');
     context.steps.push(step);
@@ -373,7 +373,7 @@ export class AgentExecutionEngine {
 
   private async simulateToolExecution(tool: AgentTool): Promise<any> {
     // Simulate tool execution with mock results
-    switch (tool.type) {
+    switch (tool.type as string) {
       case 'web_search':
         return {
           toolCallId: uuidv4(),
@@ -408,7 +408,7 @@ export class AgentExecutionEngine {
   }
 
   // Helper methods for advanced agent types
-  private async identifySubTasks(input: string, agent: Agent): Promise<any[]> {
+  private async identifySubTasks(input: string, agent: Agent): Promise<SubTask[]> {
     // Simplified sub-task identification
     return [
       { id: 'task1', description: 'Analyze the input', type: 'analysis' },
@@ -416,17 +416,17 @@ export class AgentExecutionEngine {
     ];
   }
 
-  private async delegateTaskToAgent(task: any, agent: Agent): Promise<any> {
+  private async delegateTaskToAgent(task: SubTask, agent: Agent): Promise<{ taskId: string; result: string }> {
     // Simplified task delegation
     return { taskId: task.id, result: `Completed ${task.description}` };
   }
 
-  private async synthesizeResults(results: any[], agent: Agent): Promise<string> {
+  private async synthesizeResults(results: { taskId: string; result: string }[], agent: Agent): Promise<string> {
     // Simplified result synthesis
     return `Synthesized results from ${results.length} tasks: ${results.map(r => r.result).join(', ')}`;
   }
 
-  private async makeAutonomousDecision(input: string, agent: Agent): Promise<any> {
+  private async makeAutonomousDecision(input: string, agent: Agent): Promise<AutonomousDecision> {
     // Simplified autonomous decision-making
     return {
       action: 'respond',
@@ -434,15 +434,17 @@ export class AgentExecutionEngine {
     };
   }
 
-  private async executeAutonomousDecision(decision: any, agent: Agent): Promise<string> {
+  private async executeAutonomousDecision(decision: AutonomousDecision, agent: Agent): Promise<string> {
     // Simplified autonomous decision execution
     return decision.parameters.response;
   }
 }
 
 // Tool implementations
-class WebSearchTool {
-  async execute(args: { query: string; maxResults?: number }) {
+class WebSearchTool implements AgentToolImplementation {
+  async execute(args: { query: string; maxResults?: number }): Promise<{
+    results: Array<{ title: string; url: string; snippet: string }>;
+  }> {
     // Implement web search functionality
     return {
       results: [
@@ -452,22 +454,31 @@ class WebSearchTool {
   }
 }
 
-class FileOperationsTool {
-  async execute(args: { operation: string; path?: string; content?: string }) {
+class FileOperationsTool implements AgentToolImplementation {
+  async execute(args: { operation: string; path?: string; content?: string }): Promise<{
+    success: boolean;
+    message: string;
+  }> {
     // Implement file operations
     return { success: true, message: `File operation ${args.operation} completed` };
   }
 }
 
-class DatabaseTool {
-  async execute(args: { query: string; database?: string }) {
+class DatabaseTool implements AgentToolImplementation {
+  async execute(args: { query: string; database?: string }): Promise<{
+    rows: any[];
+    affectedRows: number;
+  }> {
     // Implement database operations
     return { rows: [], affectedRows: 0 };
   }
 }
 
-class ApiCallerTool {
-  async execute(args: { url: string; method?: string; headers?: Record<string, string>; body?: any }) {
+class ApiCallerTool implements AgentToolImplementation {
+  async execute(args: { url: string; method?: string; headers?: Record<string, string>; body?: any }): Promise<{
+    status: number;
+    data: any;
+  }> {
     // Implement API calls
     return { status: 200, data: {} };
   }

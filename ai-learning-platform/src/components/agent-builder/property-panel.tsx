@@ -1,7 +1,22 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Node, Edge } from 'reactflow';
+// Define types locally to avoid import issues
+interface Node {
+  id: string;
+  type: string;
+  position: { x: number; y: number };
+  data: any;
+}
+
+interface Edge {
+  id: string;
+  source: string;
+  target: string;
+  sourceHandle?: string;
+  targetHandle?: string;
+  data?: any;
+}
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,7 +33,7 @@ interface PropertyPanelProps {
   selectedNode?: Node | null;
   selectedEdge?: Edge | null;
   onUpdateNode: (nodeId: string, data: any) => void;
-  agent?: Agent;
+  agent?: Agent | null;
   readOnly?: boolean;
 }
 

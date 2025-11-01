@@ -814,3 +814,6 @@ export interface ValidationError extends AppError {
 
 // Import Prisma types that don't have custom extensions
 // export type { User, UserProfile, Subject, Module, Lesson, Quiz, Progress, Achievement, GameStats, StudySession, AIInteraction } from '@prisma/client';
+
+// Re-export agent types for easier importing
+export * from './agents';

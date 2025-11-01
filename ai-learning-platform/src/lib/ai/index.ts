@@ -4,9 +4,20 @@ import { geminiClient } from './gemini'
 import { zAIClient } from './z-ai'
 import { createError, retry } from '../utils'
 
+// Interface for AI provider clients
+interface AIProviderClient {
+  generate(prompt: string, model: string): Promise<{
+    content: string
+    tokensUsed: number
+    cost: number
+  }>
+  healthCheck(): Promise<boolean>
+  getStats(): Promise<any>
+}
+
 export class AIService {
   private static instance: AIService
-  private providers: Map<AIProvider, any> = new Map()
+  private providers: Map<AIProvider, AIProviderClient> = new Map()
 
   private constructor() {
     this.providers.set('openrouter', openRouterClient)
@@ -37,7 +48,11 @@ export class AIService {
         () => provider.generate(enhancedPrompt, request.model),
         3,
         1000
-      )
+      ) as {
+        content: string;
+        tokensUsed: number;
+        cost: number;
+      }
 
       const latency = Date.now() - startTime
 
@@ -120,9 +135,9 @@ export class AIService {
   }
 
   async generatePersonalizedRecommendations(
-    userProgress: any,
+    userProgress: Record<string, any>,
     learningGoals: string[],
-    recentActivity: any[]
+    recentActivity: Record<string, any>[]
   ): Promise<AIResponse> {
     const prompt = `Based on the following student data, generate personalized learning recommendations:
 
@@ -160,7 +175,7 @@ export class AIService {
 
   async generateFeedback(
     submission: string,
-    rubric: any,
+    rubric: Record<string, any>,
     question: string
   ): Promise<AIResponse> {
     const prompt = `Provide constructive feedback on the following student submission:

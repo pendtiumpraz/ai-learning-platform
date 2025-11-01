@@ -104,14 +104,14 @@ export async function getSubjectProgress(userId: string, subjectId: string) {
   let totalQuizzes = 0
   let passedQuizzes = 0
 
-  modules.forEach((module: any) => {
+  modules.forEach((module) => {
     totalLessons += module.lessons.length
-    completedLessons += module.progress.filter((p: any) =>
+    completedLessons += module.progress.filter((p) =>
       p.contentType === 'LESSON' && p.status === 'COMPLETED'
     ).length
 
     totalQuizzes += module.quizzes.length
-    passedQuizzes += module.progress.filter((p: any) =>
+    passedQuizzes += module.progress.filter((p) =>
       p.contentType === 'QUIZ' && p.status === 'COMPLETED'
     ).length
   })
@@ -127,8 +127,8 @@ export async function getSubjectProgress(userId: string, subjectId: string) {
     totalQuizzes,
     passedQuizzes,
     totalModules: modules.length,
-    completedModules: modules.filter((module: any) =>
-      module.progress.filter((p: any) => p.contentType === 'MODULE' && p.status === 'COMPLETED').length > 0
+    completedModules: modules.filter((module) =>
+      module.progress.filter((p) => p.contentType === 'MODULE' && p.status === 'COMPLETED').length > 0
     ).length
   }
 }

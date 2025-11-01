@@ -358,12 +358,12 @@
   line-height: 1.6;
 }
 
-.large-text .text-xs { @apply text-sm; }
-.large-text .text-sm { @apply text-base; }
-.large-text .text-base { @apply text-lg; }
-.large-text .text-lg { @apply text-xl; }
-.large-text .text-xl { @apply text-2xl; }
-.large-text .text-2xl { @apply text-3xl; }
+.large-text .text-xs { font-size: 0.875rem; line-height: 1.25rem; }
+.large-text .text-sm { font-size: 1rem; line-height: 1.5rem; }
+.large-text .text-base { font-size: 1.125rem; line-height: 1.75rem; }
+.large-text .text-lg { font-size: 1.25rem; line-height: 1.75rem; }
+.large-text .text-xl { font-size: 1.5rem; line-height: 2rem; }
+.large-text .text-2xl { font-size: 1.875rem; line-height: 2.25rem; }
 
 /* Screen reader only content */
 .sr-only {

@@ -358,9 +358,9 @@ export class ImageProcessor {
         const colorMap: Record<string, number> = {}
 
         for (let i = 0; i < pixels.length; i += 4) {
-          const r = Math.floor((pixels[i] ?? 0) / 16) * 16
-          const g = Math.floor((pixels[i + 1] ?? 0) / 16) * 16
-          const b = Math.floor((pixels[i + 2] ?? 0) / 16) * 16
+          const r = Math.floor((pixels[i] || 0) / 16) * 16
+          const g = Math.floor((pixels[i + 1] || 0) / 16) * 16
+          const b = Math.floor((pixels[i + 2] || 0) / 16) * 16
           const rgb = `${r},${g},${b}`
 
           colorMap[rgb] = (colorMap[rgb] || 0) + 1
@@ -374,13 +374,13 @@ export class ImageProcessor {
         const totalPixels = pixels.length / 4
         const colors: ColorInfo[] = sortedColors.map(([rgb, count]) => {
           const [r, g, b] = rgb.split(',').map(Number)
-          const hex = `#${(r ?? 0).toString(16).padStart(2, '0')}${(g ?? 0).toString(16).padStart(2, '0')}${(b ?? 0).toString(16).padStart(2, '0')}`
+          const hex = `#${(r || 0).toString(16).padStart(2, '0')}${(g || 0).toString(16).padStart(2, '0')}${(b || 0).toString(16).padStart(2, '0')}`
 
           return {
             color: rgb,
             hex,
             percentage: (count / totalPixels) * 100,
-            name: this.getColorName(r ?? 0, g ?? 0, b ?? 0)
+            name: this.getColorName(r || 0, g || 0, b || 0)
           }
         })
 
@@ -413,7 +413,7 @@ export class ImageProcessor {
       throw new Error('Invalid base64 image format')
     }
 
-    const byteCharacters = atob(parts[1] ?? '')
+    const byteCharacters = atob(parts[1] || '')
     const byteNumbers = new Array(byteCharacters.length)
 
     for (let i = 0; i < byteCharacters.length; i++) {

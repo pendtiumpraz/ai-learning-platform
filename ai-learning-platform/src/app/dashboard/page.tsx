@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -10,6 +10,38 @@ import { AchievementCard } from '@/components/gamification/achievement-card'
 import { Leaderboard } from '@/components/gamification/leaderboard'
 import { StreakTracker } from '@/components/gamification/streak-tracker'
 import { LearningProgressCard } from '@/components/dashboard/learning-progress-card'
+// Define the interface locally to match what the component expects
+interface UILearningPath {
+  id: string
+  title: string
+  description: string
+  level: number
+  modules: any[]
+  estimatedDuration: number
+  difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert'
+  tags: string[]
+  isActive: boolean
+  currentModule?: {
+    id: string
+    title: string
+    type: 'video' | 'reading' | 'exercise' | 'project' | 'quiz'
+    duration: number
+  }
+  completedModules: number
+  progress: number
+  estimatedTimeRemaining: number
+  isEnrolled: boolean
+  enrollmentDate?: Date
+  lastAccessDate?: Date
+  totalModules: number
+  estimatedHours: number
+  xpReward: number
+  prerequisites: string[]
+  isLocked: boolean
+  icon: string
+  color: string
+  category: string
+}
 import {
   Trophy,
   Target,
@@ -55,28 +87,7 @@ interface DashboardData {
     unlockedAt?: Date
     progress?: number
   }>
-  learningPaths: Array<{
-    id: string
-    title: string
-    description: string
-    category: string
-    difficulty: 'beginner' | 'intermediate' | 'advanced' | 'expert'
-    progress: number
-    totalModules: number
-    completedModules: number
-    estimatedHours: number
-    xpReward: number
-    currentModule?: {
-      id: string
-      title: string
-      type: 'video' | 'reading' | 'exercise' | 'project' | 'quiz'
-      duration: number
-    }
-    prerequisites: string[]
-    isLocked: boolean
-    icon: string
-    color: string
-  }>
+  learningPaths: UILearningPath[]
   leaderboard: Array<{
     id: string
     username: string
@@ -168,8 +179,17 @@ export default function Dashboard() {
           id: '1',
           title: 'Introduction to Machine Learning',
           description: 'Learn the fundamentals of ML and AI',
-          category: 'Machine Learning',
+          level: 1, // AgentLevel BEGINNER
+          modules: [], // Would contain actual module objects
+          estimatedDuration: 20,
           difficulty: 'beginner',
+          tags: ['machine-learning', 'ai', 'fundamentals'],
+          isActive: true,
+          estimatedTimeRemaining: 7,
+          isEnrolled: true,
+          enrollmentDate: new Date('2024-01-01'),
+          lastAccessDate: new Date('2024-01-15'),
+          category: 'Machine Learning',
           progress: 65,
           totalModules: 12,
           completedModules: 8,
@@ -190,8 +210,17 @@ export default function Dashboard() {
           id: '2',
           title: 'Advanced Neural Networks',
           description: 'Deep dive into deep learning architectures',
-          category: 'Deep Learning',
+          level: 3, // AgentLevel ADVANCED
+          modules: [], // Would contain actual module objects
+          estimatedDuration: 40,
           difficulty: 'advanced',
+          tags: ['deep-learning', 'neural-networks', 'CNN'],
+          isActive: true,
+          estimatedTimeRemaining: 30,
+          isEnrolled: true,
+          enrollmentDate: new Date('2024-01-05'),
+          lastAccessDate: new Date('2024-01-10'),
+          category: 'Deep Learning',
           progress: 25,
           totalModules: 16,
           completedModules: 4,
@@ -212,8 +241,15 @@ export default function Dashboard() {
           id: '3',
           title: 'Natural Language Processing',
           description: 'Master NLP techniques and applications',
-          category: 'NLP',
+          level: 2, // AgentLevel INTERMEDIATE
+          modules: [], // Would contain actual module objects
+          estimatedDuration: 35,
           difficulty: 'intermediate',
+          tags: ['nlp', 'text-processing', 'transformers'],
+          isActive: true,
+          estimatedTimeRemaining: 35,
+          isEnrolled: false,
+          category: 'NLP',
           progress: 0,
           totalModules: 14,
           completedModules: 0,
@@ -446,12 +482,10 @@ export default function Dashboard() {
         </motion.div>
 
         {/* Dynamic Content Based on Selected View */}
-        <AnimatePresence mode="wait">
-          <motion.div
+        <motion.div
             key={selectedView}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3 }}
           >
             {selectedView === 'overview' && (
@@ -633,7 +667,6 @@ export default function Dashboard() {
               />
             )}
           </motion.div>
-        </AnimatePresence>
       </main>
     </div>
   )

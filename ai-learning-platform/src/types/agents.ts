@@ -227,6 +227,28 @@ export interface NodeData {
   parameters?: Record<string, any>;
   conditions?: ConditionRule[];
   actions?: ActionConfig[];
+  // Additional properties for node types
+  triggerType?: string;
+  condition?: string;
+  systemPrompt?: string;
+  temperature?: number;
+  maxTokens?: number;
+  schedule?: string;
+  webhookUrl?: string;
+  actionType?: string;
+  actionConfig?: string;
+  toolType?: ToolType;
+  toolConfig?: string;
+  delayAmount?: number;
+  delayUnit?: string;
+  loopType?: string;
+  loopCondition?: string;
+  maxIterations?: number;
+  retryPolicy?: any;
+  timeout?: number;
+  customProperties?: any;
+  enabled?: boolean;
+  tags?: string[];
 }
 
 export interface NodeConfig {
@@ -651,4 +673,162 @@ export interface AuthConfig {
 export interface NotificationConfig {
   type: 'email' | 'slack' | 'webhook';
   config: Record<string, any>;
+}
+
+// Tool Class Interfaces for Execution Engine
+export interface WebSearchTool {
+  search(query: string): Promise<any>;
+}
+
+export interface FileOperationsTool {
+  read(path: string): Promise<any>;
+  write(path: string, content: any): Promise<void>;
+  delete(path: string): Promise<void>;
+}
+
+export interface DatabaseTool {
+  query(sql: string, params?: any[]): Promise<any>;
+  insert(table: string, data: any): Promise<any>;
+  update(table: string, id: string, data: any): Promise<any>;
+  delete(table: string, id: string): Promise<any>;
+}
+
+export interface ApiCallerTool {
+  call(url: string, options: RequestInit): Promise<any>;
+}
+
+// Base interface for all tool implementations
+export interface AgentToolImplementation {
+  execute(args: any): Promise<any>;
+}
+
+// Execution Debug Panel Interface
+export interface ExecutionDebugPanelProps {
+  steps: ExecutionStep[];
+  isRunning: boolean;
+}
+
+// Execution Context Interface
+export interface ExecutionContext {
+  agent: Agent;
+  input: string;
+  output: string;
+  steps: ExecutionStep[];
+  execution: AgentExecution;
+  memory: Map<string, any>;
+  tools: Map<string, AgentTool>;
+  settings: Record<string, any>;
+  debugMode: boolean;
+  stepByStepMode: boolean;
+}
+
+// Additional execution interfaces
+export interface SubTask {
+  id: string;
+  description: string;
+  type: string;
+}
+
+export interface AutonomousDecision {
+  action: string;
+  parameters: Record<string, any>;
+}
+
+// Learning Path Interface Extensions
+export interface LearningPathWithProgress extends LearningPath {
+  currentModule?: string;
+  completedModules: number;
+  progress: number;
+  estimatedTimeRemaining: number;
+  nextModule?: LearningModule;
+  isEnrolled: boolean;
+  enrollmentDate?: Date;
+  lastAccessDate?: Date;
+  // Additional UI-specific properties
+  totalModules: number;
+  estimatedHours: number;
+  xpReward: number;
+  prerequisites: string[];
+  isLocked: boolean;
+  icon: string;
+  color: string;
+  category: string;
+}
+
+// Agent Learning Interfaces
+export interface AgentLearningProgress {
+  agentId: string;
+  userId: string;
+  currentLevel: AgentLevel;
+  experiencePoints: number;
+  completedModules: string[];
+  skills: Skill[];
+  achievements: Achievement[];
+  learningPaths: LearningPathWithProgress[];
+  statistics: LearningStatistics;
+}
+
+export interface Skill {
+  id: string;
+  name: string;
+  category: string;
+  level: number;
+  maxLevel: number;
+  experience: number;
+  experienceToNext: number;
+  unlocked: boolean;
+}
+
+export interface LearningStatistics {
+  totalLearningTime: number;
+  sessionsCompleted: number;
+  averageSessionDuration: number;
+  skillPointsEarned: number;
+  achievementsUnlocked: number;
+  learningStreak: number;
+  lastLearningDate: Date;
+}
+
+// Achievement interface (to avoid circular imports)
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  badgeColor: string;
+  points: number;
+  type: string;
+  category: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// React Flow Component Props Extensions
+export interface AgentBuilderProps {
+  initialWorkflow?: Workflow;
+  agent?: Agent;
+  onSave?: (workflow: Workflow) => void;
+  onExecute?: (executionId: string) => void;
+  readOnly?: boolean;
+}
+
+export interface NodePaletteProps {
+  onAddNode: (nodeType: NodeType, position: { x: number; y: number }) => void;
+}
+
+export interface PropertyPanelProps {
+  selectedNode?: any; // ReactFlow Node
+  selectedEdge?: any; // ReactFlow Edge
+  onUpdateNode: (nodeId: string, newData: any) => void;
+  agent?: Agent | null;
+  readOnly?: boolean;
+}
+
+// Service Function Signatures
+export interface SaveWorkflowFunction {
+  (workflow: Workflow): Promise<void>;
+}
+
+export interface ExecuteWorkflowFunction {
+  (workflowId: string, data: { nodes: any[], edges: any[] }): Promise<AgentExecution>;
 }
