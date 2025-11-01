@@ -1,14 +1,11 @@
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { ReactFlow, Node, Edge, addEdge, Connection, useNodesState, useEdgesState, Controls, MiniMap, Background, BackgroundVariant } from 'reactflow';
+import ReactFlow, { Node, Edge, addEdge, Connection, useNodesState, useEdgesState, Controls, MiniMap, Background, BackgroundVariant } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { AgentBuilderToolbar } from './agent-builder-toolbar';
 import { NodePalette } from './node-palette';
 import { PropertyPanel } from './property-panel';
-import { ExecutionDebugPanel } from './execution-debug-panel';
-import { Agent, Workflow, WorkflowNode, WorkflowEdge, NodeType } from '@/types/agents';
-import { saveWorkflow, executeWorkflow } from '@/lib/agent-framework/workflow-service';
+import { Agent, Workflow, NodeType } from '@/types/agents';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Play, Save, Undo, Redo, Settings, Bug } from 'lucide-react';
@@ -60,16 +57,16 @@ export function AgentBuilder({
       id: `edge-${Date.now()}`,
       type: 'smoothstep',
     };
-    setEdges((eds) => addEdge(newEdge, eds));
+    setEdges((eds: Edge[]) => addEdge(newEdge, eds));
     setIsDirty(true);
   }, [setEdges]);
 
-  const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
+  const onNodeClick = useCallback((_event: React.MouseEvent, node: Node) => {
     setSelectedNode(node);
     setSelectedEdge(null);
   }, []);
 
-  const onEdgeClick = useCallback((event: React.MouseEvent, edge: Edge) => {
+  const onEdgeClick = useCallback((_event: React.MouseEvent, edge: Edge) => {
     setSelectedEdge(edge);
     setSelectedNode(null);
   }, []);
@@ -89,10 +86,12 @@ export function AgentBuilder({
   const undo = useCallback(() => {
     if (historyIndex > 0) {
       const prevState = history[historyIndex - 1];
-      setNodes(prevState.nodes);
-      setEdges(prevState.edges);
-      setHistoryIndex(historyIndex - 1);
-      setIsDirty(true);
+      if (prevState) {
+        setNodes(prevState.nodes);
+        setEdges(prevState.edges);
+        setHistoryIndex(historyIndex - 1);
+        setIsDirty(true);
+      }
     }
   }, [history, historyIndex, setNodes, setEdges]);
 

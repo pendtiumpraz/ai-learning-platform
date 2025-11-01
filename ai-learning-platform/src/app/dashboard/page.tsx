@@ -14,21 +14,14 @@ import {
   Trophy,
   Target,
   Brain,
-  Code,
   BookOpen,
-  Zap,
   Star,
-  TrendingUp,
   Users,
-  Calendar,
   Gift,
   Settings,
   Bell,
-  User,
-  ChevronRight,
   Flame,
-  Award,
-  Sparkles
+  Award
 } from 'lucide-react'
 
 interface DashboardData {
@@ -113,7 +106,6 @@ export default function Dashboard() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [selectedView, setSelectedView] = useState<'overview' | 'achievements' | 'leaderboard' | 'learning'>('overview')
-  const [showLevelUpAnimation, setShowLevelUpAnimation] = useState(false)
 
   // Mock data - in real app, this would come from API
   useEffect(() => {
@@ -422,7 +414,7 @@ export default function Dashboard() {
             currentXP={user.totalXP}
             showDetails={true}
             animated={true}
-            onLevelUp={(newLevel) => setShowLevelUpAnimation(true)}
+            onLevelUp={() => {}}
           />
         </motion.div>
 

@@ -639,3 +639,16 @@ export interface PlaygroundSettings {
   maxTokens: number;
   temperature: number;
 }
+
+// Additional missing interfaces
+export interface AuthConfig {
+  type: 'bearer' | 'basic' | 'api_key';
+  token?: string;
+  username?: string;
+  password?: string;
+}
+
+export interface NotificationConfig {
+  type: 'email' | 'slack' | 'webhook';
+  config: Record<string, any>;
+}

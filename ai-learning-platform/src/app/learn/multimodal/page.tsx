@@ -10,9 +10,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Progress } from '@/components/ui/progress'
 import {
   Upload,
-  Image as ImageIcon,
-  Volume2,
-  Mic,
   Play,
   Pause,
   Download,

@@ -150,7 +150,7 @@ export class ImageProcessor {
   private config: ImageConfig
 
   constructor(imageConfig: ImageConfig = IMAGE_CONFIGS.analysis) {
-    this.config = imageConfig
+    this.config = imageConfig ?? IMAGE_CONFIGS.analysis
   }
 
   /**
@@ -408,7 +408,12 @@ export class ImageProcessor {
    * Convert base64 to blob
    */
   base64ToBlob(imageBase64: string, imageType: string = 'image/jpeg'): Blob {
-    const byteCharacters = atob(imageBase64.split(',')[1])
+    const parts = imageBase64.split(',')
+    if (parts.length < 2) {
+      throw new Error('Invalid base64 image format')
+    }
+
+    const byteCharacters = atob(parts[1] ?? '')
     const byteNumbers = new Array(byteCharacters.length)
 
     for (let i = 0; i < byteCharacters.length; i++) {

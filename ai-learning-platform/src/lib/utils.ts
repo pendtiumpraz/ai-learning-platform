@@ -85,7 +85,7 @@ export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {
-  let timeout: NodeJS.Timeout
+  let timeout: ReturnType<typeof setTimeout>
   return (...args: Parameters<T>) => {
     clearTimeout(timeout)
     timeout = setTimeout(() => func(...args), wait)
@@ -215,7 +215,7 @@ export function shuffle<T>(array: T[]): T[] {
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     const temp = shuffled[i]
-    shuffled[i] = shuffled[j]!
+    shuffled[i] = shuffled[j]
     shuffled[j] = temp
   }
   return shuffled

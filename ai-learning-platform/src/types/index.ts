@@ -1,4 +1,139 @@
-import { User, UserProfile, Subject, Module, Lesson, Quiz, Progress, Achievement, GameStats, StudySession, AIInteraction } from '@prisma/client';
+// import { User, UserProfile, Subject, Module, Lesson, Quiz, Progress, Achievement, GameStats, StudySession, AIInteraction } from '@prisma/client';
+
+// Basic type definitions to replace Prisma types for now
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface UserProfile {
+  id: string;
+  userId: string;
+  bio?: string;
+  avatar?: string;
+  preferences?: Record<string, any>;
+}
+
+export interface Subject {
+  id: string;
+  name: string;
+  description: string;
+  icon: string;
+  color: string;
+  category: string;
+  difficulty: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Module {
+  id: string;
+  subjectId: string;
+  title: string;
+  description: string;
+  order: number;
+  difficulty: string;
+  estimatedTime: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Lesson {
+  id: string;
+  moduleId: string;
+  title: string;
+  content: string;
+  type: string;
+  duration: number;
+  order: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Quiz {
+  id: string;
+  moduleId: string;
+  title: string;
+  description: string;
+  type: string;
+  timeLimit?: number;
+  passingScore: number;
+  maxAttempts: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Progress {
+  id: string;
+  userId: string;
+  contentType: string;
+  contentId: string;
+  status: string;
+  completionPercent?: number;
+  timeSpent?: number;
+  firstAttemptDate: Date;
+  lastAttemptDate: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Achievement {
+  id: string;
+  title: string;
+  description: string;
+  icon: string;
+  badgeColor: string;
+  points: number;
+  type: string;
+  category: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface GameStats {
+  id: string;
+  userId: string;
+  gamesPlayed: number;
+  gamesWon: number;
+  totalScore: number;
+  bestScore: number;
+  currentStreak: number;
+  bestStreak: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface StudySession {
+  id: string;
+  userId: string;
+  subjectId?: string;
+  moduleId?: string;
+  startTime: Date;
+  endTime?: Date;
+  duration?: number;
+  activities?: Record<string, any>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AIInteraction {
+  id: string;
+  userId: string;
+  type: string;
+  prompt: string;
+  response: string;
+  model: string;
+  tokensUsed?: number;
+  cost?: number;
+  latency?: number;
+  rating?: number;
+  feedback?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 // Base Types
 export interface BaseEntity {
@@ -51,6 +186,28 @@ export interface ModuleWithContent extends Module {
   progress?: Progress;
 }
 
+export interface LessonQuestion {
+  id: string;
+  lessonId: string;
+  question: string;
+  type: string;
+  options?: string[];
+  correctAnswer: string;
+  explanation?: string;
+  order: number;
+  points: number;
+}
+
+export interface LessonResource {
+  id: string;
+  lessonId: string;
+  title: string;
+  type: string;
+  url: string;
+  description?: string;
+  order: number;
+}
+
 export interface LessonWithQuestions extends Lesson {
   module: Module;
   questions: LessonQuestion[];
@@ -59,6 +216,31 @@ export interface LessonWithQuestions extends Lesson {
 }
 
 // Assessment Types
+export interface Question {
+  id: string;
+  quizId: string;
+  question: string;
+  type: string;
+  options?: string[];
+  correctAnswer: string;
+  explanation?: string;
+  points: number;
+  order: number;
+}
+
+export interface QuizAttempt {
+  id: string;
+  quizId: string;
+  userId: string;
+  score: number;
+  maxScore: number;
+  answers: Record<string, any>;
+  startedAt: Date;
+  completedAt?: Date;
+  timeSpent?: number;
+  passed: boolean;
+}
+
 export interface QuizWithQuestions extends Quiz {
   module: Module;
   questions: Question[];
@@ -116,6 +298,22 @@ export interface LearningPace {
 }
 
 // Gamification Types
+export interface AchievementRequirement {
+  id: string;
+  achievementId: string;
+  type: string;
+  target: number;
+  metric: string;
+}
+
+export interface UserAchievement {
+  id: string;
+  userId: string;
+  achievementId: string;
+  progress: number;
+  unlockedAt?: Date;
+}
+
 export interface AchievementWithProgress extends Achievement {
   requirements: AchievementRequirement[];
   userProgress?: UserAchievement;
@@ -615,4 +813,4 @@ export interface ValidationError extends AppError {
 }
 
 // Import Prisma types that don't have custom extensions
-export type { User, UserProfile, Subject, Module, Lesson, Quiz, Progress, Achievement, GameStats, StudySession, AIInteraction } from '@prisma/client';
+// export type { User, UserProfile, Subject, Module, Lesson, Quiz, Progress, Achievement, GameStats, StudySession, AIInteraction } from '@prisma/client';

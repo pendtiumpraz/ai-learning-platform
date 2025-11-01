@@ -11,8 +11,8 @@ import {
   GitBranch,
   Play,
   Wrench,
-  Input,
-  Output,
+  User,
+  ArrowRight,
   Clock,
   RefreshCw,
   Merge,
@@ -80,7 +80,7 @@ const nodeCategories = [
         type: NodeType.INPUT,
         name: 'Input',
         description: 'Data input node',
-        icon: Input,
+        icon: User,
         color: 'bg-gray-500',
         category: 'tools'
       },
@@ -88,7 +88,7 @@ const nodeCategories = [
         type: NodeType.OUTPUT,
         name: 'Output',
         description: 'Data output node',
-        icon: Output,
+        icon: ArrowRight,
         color: 'bg-gray-500',
         category: 'tools'
       }

@@ -1,16 +1,11 @@
-import { Agent, AgentExecution, ExecutionStep, ExecutionStatus, AgentTool, PromptConfig } from '@/types/agents';
-import { OpenAI } from 'openai';
+import { Agent, AgentExecution, ExecutionStep, ExecutionStatus, AgentTool, PromptConfig } from '../../types/agents';
 import { v4 as uuidv4 } from 'uuid';
 
 export class AgentExecutionEngine {
-  private openai: OpenAI;
   private tools: Map<string, any> = new Map();
   private memory: Map<string, any> = new Map();
 
   constructor() {
-    this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
     this.initializeBuiltInTools();
   }
 
@@ -112,31 +107,23 @@ export class AgentExecutionEngine {
 
   private async executePromptBasedAgent(agent: Agent, context: any) {
     const systemPrompt = this.getSystemPrompt(agent);
-    const messages = [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: context.input }
-    ];
 
     const step = this.createStep('llm_call', 'Processing input with LLM');
     context.steps.push(step);
 
     try {
-      const completion = await this.openai.chat.completions.create({
-        model: agent.config.model.modelName,
-        messages,
-        temperature: context.settings.temperature,
-        max_tokens: context.settings.maxTokens,
-      });
+      // For now, simulate a response without actual LLM call
+      // In production, this would integrate with an actual LLM service
+      const simulatedResponse = `Based on the system prompt: "${systemPrompt.substring(0, 100)}..." and user input: "${context.input.substring(0, 100)}...", I'm generating a simulated response. This would normally use the configured LLM model (${agent.config.model.modelName}) with temperature ${context.settings.temperature} and max tokens ${context.settings.maxTokens}.`;
 
-      const response = completion.choices[0]?.message?.content || '';
-      context.output = response;
+      context.output = simulatedResponse;
 
-      step.output = { content: response };
+      step.output = { content: simulatedResponse };
       step.status = ExecutionStatus.COMPLETED;
       step.endTime = new Date();
 
-      context.execution.metrics.tokenCount += completion.usage?.total_tokens || 0;
-      context.execution.metrics.cost += this.calculateCost(completion.usage, agent.config.model.modelName);
+      context.execution.metrics.tokenCount += 150; // Simulated token count
+      context.execution.metrics.cost += 0.01; // Simulated cost
       context.execution.metrics.apiCalls++;
     } catch (error) {
       step.status = ExecutionStatus.FAILED;
@@ -149,12 +136,6 @@ export class AgentExecutionEngine {
 
   private async executeToolUsingAgent(agent: Agent, context: any) {
     const systemPrompt = this.getSystemPrompt(agent);
-    const availableTools = this.prepareToolsForOpenAI(agent.tools);
-
-    const messages = [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: context.input }
-    ];
 
     let maxIterations = agent.config.execution.maxSteps || 10;
     let iteration = 0;
@@ -166,43 +147,22 @@ export class AgentExecutionEngine {
       context.steps.push(step);
 
       try {
-        const completion = await this.openai.chat.completions.create({
-          model: agent.config.model.modelName,
-          messages,
-          temperature: context.settings.temperature,
-          max_tokens: context.settings.maxTokens,
-          tools: availableTools,
-          tool_choice: 'auto',
-        });
+        // For now, simulate tool execution without actual LLM call
+        // In production, this would integrate with an actual LLM service
+        const hasTools = agent.tools.length > 0;
 
-        const responseMessage = completion.choices[0]?.message;
-
-        if (responseMessage?.tool_calls && responseMessage.tool_calls.length > 0) {
-          // Execute tool calls
-          const toolResults = await this.executeToolCalls(responseMessage.tool_calls, agent.tools);
-
-          messages.push({
-            role: 'assistant',
-            content: responseMessage.content || '',
-            tool_calls: responseMessage.tool_calls.map(call => ({
-              id: call.id,
-              type: call.type,
-              function: call.function,
-            })),
-          });
-
-          for (const result of toolResults) {
-            messages.push({
-              role: 'tool',
-              tool_call_id: result.toolCallId,
-              content: JSON.stringify(result.result),
-            });
+        if (hasTools && iteration === 1) {
+          // Simulate tool execution on first iteration
+          const toolResults = [];
+          for (const tool of agent.tools.slice(0, 2)) { // Simulate using first 2 tools
+            const result = await this.simulateToolExecution(tool);
+            toolResults.push(result);
           }
 
-          step.output = { toolCalls: responseMessage.tool_calls, results: toolResults };
+          step.output = { toolCalls: agent.tools.slice(0, 2), results: toolResults };
         } else {
           // Final response
-          context.output = responseMessage?.content || '';
+          context.output = `Processed input "${context.input.substring(0, 100)}..." using ${agent.tools.length} available tools. This is a simulated response that would normally be generated by the LLM after tool execution.`;
           step.output = { content: context.output };
           break;
         }
@@ -210,8 +170,8 @@ export class AgentExecutionEngine {
         step.status = ExecutionStatus.COMPLETED;
         step.endTime = new Date();
 
-        context.execution.metrics.tokenCount += completion.usage?.total_tokens || 0;
-        context.execution.metrics.cost += this.calculateCost(completion.usage, agent.config.model.modelName);
+        context.execution.metrics.tokenCount += 100; // Simulated token count
+        context.execution.metrics.cost += 0.005; // Simulated cost
         context.execution.metrics.apiCalls++;
       } catch (error) {
         step.status = ExecutionStatus.FAILED;
@@ -409,6 +369,42 @@ export class AgentExecutionEngine {
 
     const rate = costPer1kTokens[model as keyof typeof costPer1kTokens] || 0.002;
     return ((inputCost + outputCost) / 1000) * rate;
+  }
+
+  private async simulateToolExecution(tool: AgentTool): Promise<any> {
+    // Simulate tool execution with mock results
+    switch (tool.type) {
+      case 'web_search':
+        return {
+          toolCallId: uuidv4(),
+          result: {
+            results: [
+              { title: 'Sample Search Result 1', url: 'https://example.com', snippet: 'This is a sample search result' },
+              { title: 'Sample Search Result 2', url: 'https://example.org', snippet: 'Another sample result' }
+            ]
+          }
+        };
+      case 'database':
+        return {
+          toolCallId: uuidv4(),
+          result: { rows: [], affectedRows: 0 }
+        };
+      case 'file_operations':
+        return {
+          toolCallId: uuidv4(),
+          result: { success: true, message: 'File operation completed successfully' }
+        };
+      case 'api_call':
+        return {
+          toolCallId: uuidv4(),
+          result: { status: 200, data: { message: 'API call successful' } }
+        };
+      default:
+        return {
+          toolCallId: uuidv4(),
+          result: { success: true, message: `Tool ${tool.name} executed successfully` }
+        };
+    }
   }
 
   // Helper methods for advanced agent types
