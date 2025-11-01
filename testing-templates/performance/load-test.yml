@@ -1,0 +1,150 @@
+# Artillery Load Testing Configuration
+config:
+  target: 'http://localhost:3000'
+  phases:
+    # Warmup phase
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm up"
+
+    # Normal load
+    - duration: 120
+      arrivalRate: 20
+      name: "Normal load"
+
+    # Peak load
+    - duration: 180
+      arrivalRate: 50
+      name: "Peak load"
+
+    # Stress test
+    - duration: 120
+      arrivalRate: 100
+      name: "Stress test"
+
+    # Sustained load
+    - duration: 300
+      arrivalRate: 30
+      name: "Sustained load"
+
+  processor: "./test-processor.js"
+
+  # Custom HTTP headers
+  headers:
+    Content-Type: "application/json"
+    User-Agent: "AI-Learning-Platform-LoadTest/1.0"
+
+scenarios:
+  - name: "User Authentication Flow"
+    weight: 10
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "test{{ randomString() }}@example.com"
+            password: "testpassword123"
+          capture:
+            - json: "$.token"
+              as: "authToken"
+
+      - get:
+          url: "/api/user/profile"
+          headers:
+            Authorization: "Bearer {{ authToken }}"
+
+  - name: "AI Question Answering Flow"
+    weight: 40
+    flow:
+      - get:
+          url: "/api/subjects"
+
+      - post:
+          url: "/api/ask"
+          json:
+            question: "What is {{ randomElement(['photosynthesis', 'gravity', 'algebra', 'programming']) }}?"
+            subject: "{{ randomElement(['biology', 'physics', 'mathematics', 'programming']) }}"
+            level: "{{ randomElement(['beginner', 'intermediate', 'advanced']) }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: "answer"
+
+  - name: "Quiz Generation and Attempt"
+    weight: 20
+    flow:
+      - post:
+          url: "/api/generate/quiz"
+          json:
+            subject: "{{ randomElement(['mathematics', 'physics', 'chemistry']) }}"
+            topics: ["{{ randomElement(['algebra', 'geometry', 'calculus']) }}"]
+            questionCount: "{{ randomInteger([5, 10, 15]) }}"
+            difficulty: "{{ randomElement(['easy', 'medium', 'hard']) }}"
+          capture:
+            - json: "$.id"
+              as: "quizId"
+
+      - get:
+          url: "/api/quiz/{{ quizId }}"
+
+      - post:
+          url: "/api/quiz/{{ quizId }}/answer"
+          json:
+            questionIndex: 0
+            answer: 0
+
+  - name: "Progress Tracking"
+    weight: 15
+    flow:
+      - post:
+          url: "/api/user/progress/{{ randomString() }}"
+          json:
+            subject: "{{ randomElement(['mathematics', 'physics', 'chemistry']) }}"
+            questionAnswered: "{{ randomInteger([1, 5, 10]) }}"
+            correct: "{{ randomBoolean() }}"
+            timeSpent: "{{ randomInteger([60, 180, 300]) }}"
+
+      - get:
+          url: "/api/user/progress/{{ randomString() }}"
+
+  - name: "Flashcard Generation"
+    weight: 10
+    flow:
+      - post:
+          url: "/api/generate/flashcards"
+          json:
+            topic: "{{ randomElement(['biology', 'chemistry', 'history']) }}"
+            count: "{{ randomInteger([5, 10, 20]) }}"
+            difficulty: "{{ randomElement(['beginner', 'intermediate', 'advanced']) }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: "flashcards"
+
+  - name: "Dashboard Loading"
+    weight: 5
+    flow:
+      - get:
+          url: "/api/dashboard/stats"
+          expect:
+            - statusCode: 200
+
+      - get:
+          url: "/api/dashboard/recent-activity"
+
+# Additional configuration for performance monitoring
+processor: "./test-processor.js"
+
+# Metrics collection
+metrics:
+  throughput: true
+  responseTime: true
+  latency: true
+  errors: true
+
+# Response time thresholds
+tresholds:
+  - http.response_time.p99: 5000  # 99th percentile under 5s
+  - http.response_time.p95: 3000  # 95th percentile under 3s
+  - http.response_time.p90: 2000  # 90th percentile under 2s
+  - http.response_time.p50: 1000  # 50th percentile under 1s
+  - http.codes.200: 95            # 95% success rate
+  - http.codes.429: 5             # Less than 5% rate limiting
+  - http.codes.500: 1             # Less than 1% server errors

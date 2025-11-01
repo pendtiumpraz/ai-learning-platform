@@ -1,0 +1,112 @@
+# AI Learning Platform Stress Testing Configuration
+config:
+  target: '{{ $processEnvironment.BASE_URL || "http://localhost:3000" }}'
+  phases:
+    # Gradual ramp-up to find breaking point
+    - duration: 300
+      arrivalRate: 10
+      rampTo: 200
+      name: "Gradual ramp-up"
+
+    # Sustained peak load
+    - duration: 600
+      arrivalRate: 200
+      name: "Sustained peak load"
+
+    # Spike testing
+    - duration: 60
+      arrivalRate: 500
+      name: "Spike test"
+
+    # Recovery phase
+    - duration: 300
+      arrivalRate: 50
+      name: "Recovery phase"
+
+  processor: "./tests/performance/processor.js"
+
+  # Aggressive timeouts for stress testing
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      User-Agent: "AI-Learning-Platform-StressTest/1.0"
+    timeout: 30
+
+  # Environment variables
+  variables:
+    maxThinkTime: 1
+
+scenarios:
+  # High-frequency AI requests (most resource-intensive)
+  - name: "High-Frequency AI Requests"
+    weight: 50
+    flow:
+      - post:
+          url: "/api/ask"
+          json:
+            question: "{{ generateComplexQuestion() }}"
+            subject: "mathematics"
+            level: "advanced"
+          capture:
+            - json: "$.responseTime"
+              as: "responseTime"
+          expect:
+            - statusCode: 200
+          timeout: 45  # Longer timeout for AI responses
+
+      - think: {{ maxThinkTime }}
+
+  # Concurrent user sessions
+  - name: "Concurrent User Sessions"
+    weight: 30
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "stressuser{{ randomNumber(1000, 9999) }}@test.com"
+            password: "testpassword123"
+          capture:
+            - json: "$.token"
+              as: "userToken"
+          expect:
+            - statusCode: 200
+
+      - think: 1
+
+      - loop:
+          - get:
+              url: "/api/user/progress"
+              headers:
+                Authorization: "Bearer {{ userToken }}"
+              expect:
+                - statusCode: 200
+          count: 5
+
+  # Resource-intensive operations
+  - name: "Resource Intensive Operations"
+    weight: 20
+    flow:
+      # Quiz generation (computationally expensive)
+      - post:
+          url: "/api/quiz/generate"
+          json:
+            subject: "{{ random(['mathematics', 'science', 'programming']) }}"
+            difficulty: "hard"
+            questionCount: 20
+          expect:
+            - statusCode: 201
+          timeout: 60
+
+      - think: 2
+
+      # Analytics processing
+      - get:
+          url: "/api/analytics/comprehensive"
+          headers:
+            Authorization: "Bearer {{ userToken }}"
+          query:
+            period: "year"
+            detailed: true
+          expect:
+            - statusCode: 200
+          timeout: 45

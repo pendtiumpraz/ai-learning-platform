@@ -1,0 +1,170 @@
+# AI Learning Platform Load Testing Configuration
+config:
+  target: '{{ $processEnvironment.BASE_URL || "http://localhost:3000" }}'
+  phases:
+    # Warmup phase
+    - duration: 60
+      arrivalRate: 5
+      name: "Warm up"
+
+    # Normal load
+    - duration: 120
+      arrivalRate: 20
+      name: "Normal load"
+
+    # Peak load simulation
+    - duration: 180
+      arrivalRate: 50
+      name: "Peak load"
+
+    # Stress testing
+    - duration: 120
+      arrivalRate: 100
+      name: "Stress test"
+
+    # Cool down
+    - duration: 60
+      arrivalRate: 10
+      name: "Cool down"
+
+  processor: "./tests/performance/processor.js"
+
+  # Load testing defaults
+  defaults:
+    headers:
+      Content-Type: "application/json"
+      User-Agent: "AI-Learning-Platform-LoadTest/1.0"
+
+  # Environment variables
+  variables:
+    thinkTime: 2
+
+scenarios:
+  # AI Tutor API Load Testing
+  - name: "AI Tutor Question Flow"
+    weight: 40
+    flow:
+      - think: {{ $thinkTime }}
+
+      - post:
+          url: "/api/ask"
+          json:
+            question: "{{ question }}"
+            subject: "{{ random(['mathematics', 'science', 'history', 'literature', 'programming']) }}"
+            level: "{{ random(['beginner', 'intermediate', 'advanced']) }}"
+          capture:
+            - json: "$.answer"
+              as: "aiResponse"
+            - json: "$.responseTime"
+              as: "responseTime"
+          expect:
+            - statusCode: 200
+            - hasProperty: "answer"
+            - hasProperty: "followUpQuestions"
+
+      - think: {{ thinkTime }}
+
+  # User Progress Tracking
+  - name: "User Progress Tracking"
+    weight: 25
+    flow:
+      - get:
+          url: "/api/user/progress"
+          headers:
+            Authorization: "Bearer {{ userToken }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: "progress"
+
+      - think: {{ thinkTime }}
+
+      - post:
+          url: "/api/user/progress"
+          headers:
+            Authorization: "Bearer {{ userToken }}"
+          json:
+            subject: "{{ random(['mathematics', 'science', 'history']) }}"
+            progress: "{{ randomNumber(1, 100) }}"
+            timeSpent: "{{ randomNumber(60, 3600) }}"
+          expect:
+            - statusCode: 201
+
+  # Quiz System Load Testing
+  - name: "Quiz Generation and Submission"
+    weight: 20
+    flow:
+      - post:
+          url: "/api/quiz/generate"
+          json:
+            subject: "{{ random(['mathematics', 'science', 'history']) }}"
+            difficulty: "{{ random(['easy', 'medium', 'hard']) }}"
+            questionCount: 5
+          capture:
+            - json: "$.quizId"
+              as: "quizId"
+          expect:
+            - statusCode: 201
+            - hasProperty: "questions"
+
+      - think: {{ randomNumber(10, 30) }}
+
+      - post:
+          url: "/api/quiz/{{ quizId }}/submit"
+          json:
+            answers: "{{ generateQuizAnswers() }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: "score"
+            - hasProperty: "feedback"
+
+  # Flashcard System Load Testing
+  - name: "Flashcard Operations"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/flashcards"
+          query:
+            subject: "{{ random(['mathematics', 'science', 'history']) }}"
+            limit: 10
+          headers:
+            Authorization: "Bearer {{ userToken }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: "flashcards"
+
+      - think: {{ thinkTime }}
+
+      - post:
+          url: "/api/flashcards/review"
+          headers:
+            Authorization: "Bearer {{ userToken }}"
+          json:
+            flashcardId: "{{ randomNumber(1, 1000) }}"
+            difficulty: "{{ random(['easy', 'medium', 'hard']) }}"
+          expect:
+            - statusCode: 200
+
+  # Dashboard and Analytics
+  - name: "Dashboard Loading"
+    weight: 5
+    flow:
+      - get:
+          url: "/api/user/dashboard"
+          headers:
+            Authorization: "Bearer {{ userToken }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: "stats"
+            - hasProperty: "recentActivity"
+
+      - think: {{ thinkTime * 2 }}
+
+      - get:
+          url: "/api/user/analytics"
+          headers:
+            Authorization: "Bearer {{ userToken }}"
+          query:
+            period: "{{ random(['week', 'month', 'year']) }}"
+          expect:
+            - statusCode: 200
+            - hasProperty: "data"
