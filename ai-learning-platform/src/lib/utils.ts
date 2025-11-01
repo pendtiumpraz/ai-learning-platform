@@ -105,3 +105,293 @@ export function throttle<T extends (...args: any[]) => any>(
     }
   }
 }
+
+// Error handling utilities
+export function createError(message: string, code: string = 'UNKNOWN_ERROR'): AppError {
+  return {
+    code,
+    message,
+    timestamp: new Date(),
+  }
+}
+
+export function isAppError(error: any): error is AppError {
+  return error && typeof error === 'object' && 'code' in error && 'message' in error
+}
+
+// Retry utility
+export async function retry<T>(
+  fn: () => Promise<T>,
+  maxRetries: number = 3,
+  delay: number = 1000,
+  backoff: 'linear' | 'exponential' = 'exponential'
+): Promise<T> {
+  let lastError: Error
+
+  for (let i = 0; i <= maxRetries; i++) {
+    try {
+      return await fn()
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error))
+
+      if (i === maxRetries) {
+        throw lastError
+      }
+
+      const waitTime = backoff === 'exponential'
+        ? delay * Math.pow(2, i)
+        : delay * (i + 1)
+
+      await new Promise(resolve => setTimeout(resolve, waitTime))
+    }
+  }
+
+  throw lastError!
+}
+
+// File utilities
+export function formatFileSize(bytes: number): string {
+  if (bytes === 0) return '0 Bytes'
+
+  const k = 1024
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
+
+export function getFileExtension(filename: string): string {
+  return filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2)
+}
+
+export function isImageFile(filename: string): boolean {
+  const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg']
+  const ext = getFileExtension(filename).toLowerCase()
+  return imageExtensions.includes(ext)
+}
+
+export function isAudioFile(filename: string): boolean {
+  const audioExtensions = ['mp3', 'wav', 'ogg', 'aac', 'flac', 'm4a']
+  const ext = getFileExtension(filename).toLowerCase()
+  return audioExtensions.includes(ext)
+}
+
+export function isVideoFile(filename: string): boolean {
+  const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv']
+  const ext = getFileExtension(filename).toLowerCase()
+  return videoExtensions.includes(ext)
+}
+
+// Validation utilities
+export function isValidEmail(email: string): boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(email)
+}
+
+export function isValidUrl(url: string): boolean {
+  try {
+    new URL(url)
+    return true
+  } catch {
+    return false
+  }
+}
+
+export function sanitizeString(str: string): string {
+  return str.replace(/[<>]/g, '').trim()
+}
+
+// Array utilities
+export function chunk<T>(array: T[], size: number): T[][] {
+  const chunks: T[][] = []
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size))
+  }
+  return chunks
+}
+
+export function shuffle<T>(array: T[]): T[] {
+  const shuffled = [...array]
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = shuffled[i]
+    shuffled[i] = shuffled[j]!
+    shuffled[j] = temp
+  }
+  return shuffled
+}
+
+export function unique<T>(array: T[]): T[] {
+  return Array.from(new Set(array))
+}
+
+// Number utilities
+export function clamp(number: number, min: number, max: number): number {
+  return Math.min(Math.max(number, min), max)
+}
+
+export function randomBetween(min: number, max: number): number {
+  return Math.random() * (max - min) + min
+}
+
+export function roundTo(number: number, decimals: number): number {
+  return Math.round(number * Math.pow(10, decimals)) / Math.pow(10, decimals)
+}
+
+// Date utilities
+export function formatDate(date: Date, format: string = 'YYYY-MM-DD'): string {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0')
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+
+  return format
+    .replace('YYYY', String(year))
+    .replace('MM', month)
+    .replace('DD', day)
+    .replace('HH', hours)
+    .replace('mm', minutes)
+    .replace('ss', seconds)
+}
+
+export function addDays(date: Date, days: number): Date {
+  const result = new Date(date)
+  result.setDate(result.getDate() + days)
+  return result
+}
+
+export function addHours(date: Date, hours: number): Date {
+  const result = new Date(date)
+  result.setHours(result.getHours() + hours)
+  return result
+}
+
+export function isToday(date: Date): boolean {
+  const today = new Date()
+  return date.toDateString() === today.toDateString()
+}
+
+export function isYesterday(date: Date): boolean {
+  const yesterday = new Date()
+  yesterday.setDate(yesterday.getDate() - 1)
+  return date.toDateString() === yesterday.toDateString()
+}
+
+// Color utilities
+export function hexToRgb(hexColor: string): { r: number; g: number; b: number } | null {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexColor)
+  return result ? {
+    r: parseInt(result[1] ?? '0', 16),
+    g: parseInt(result[2] ?? '0', 16),
+    b: parseInt(result[3] ?? '0', 16)
+  } : null
+}
+
+export function rgbToHex(r: number, g: number, b: number): string {
+  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)
+}
+
+export function getRandomColor(): string {
+  return '#' + Math.floor(Math.random()*16777215).toString(16)
+}
+
+// String utilities
+export function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s-]/g, '')
+    .replace(/[\s_-]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+export function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1)
+}
+
+export function truncate(text: string, length: number, suffix: string = '...'): string {
+  if (text.length <= length) return text
+  return text.slice(0, length - suffix.length) + suffix
+}
+
+export function escapeHtml(text: string): string {
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  }
+  return text.replace(/[&<>"']/g, m => map[m] || m)
+}
+
+// Deep clone utility
+export function deepClone<T>(obj: T): T {
+  if (obj === null || typeof obj !== 'object') return obj
+  if (obj instanceof Date) return new Date(obj.getTime()) as unknown as T
+  if (obj instanceof Array) return obj.map(item => deepClone(item)) as unknown as T
+  if (typeof obj === 'object') {
+    const clonedObj = {} as T
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        clonedObj[key] = deepClone(obj[key])
+      }
+    }
+    return clonedObj
+  }
+  return obj
+}
+
+// Local storage utilities
+export function getLocalStorage(key: string, defaultValue?: any): any {
+  try {
+    const item = window.localStorage.getItem(key)
+    return item ? JSON.parse(item) : defaultValue
+  } catch (error) {
+    console.error(`Error reading from localStorage: ${error}`)
+    return defaultValue
+  }
+}
+
+export function setLocalStorage(key: string, value: any): void {
+  try {
+    window.localStorage.setItem(key, JSON.stringify(value))
+  } catch (error) {
+    console.error(`Error writing to localStorage: ${error}`)
+  }
+}
+
+export function removeLocalStorage(key: string): void {
+  try {
+    window.localStorage.removeItem(key)
+  } catch (error) {
+    console.error(`Error removing from localStorage: ${error}`)
+  }
+}
+
+// Performance utilities
+export function asyncTimeout(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+export function measureAsync<T>(fn: () => Promise<T>): Promise<{ result: T; duration: number }> {
+  return new Promise(async (resolve) => {
+    const start = performance.now()
+    try {
+      const result = await fn()
+      const duration = performance.now() - start
+      resolve({ result, duration })
+    } catch (error) {
+      throw error
+    }
+  })
+}
+
+// Types
+export interface AppError {
+  code: string
+  message: string
+  timestamp: Date
+  details?: any
+}

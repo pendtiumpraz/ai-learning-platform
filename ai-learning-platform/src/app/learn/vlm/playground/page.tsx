@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, useCallback } from 'react'
+import React, { useState, useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -11,17 +11,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Upload,
   Camera,
-  Image as ImageIcon,
   Download,
   Eye,
   Brain,
   ArrowLeft,
   Zap,
   Settings,
-  Play,
   Trash2,
   FileText,
-  Palette,
   Grid3X3
 } from 'lucide-react'
 import Link from 'next/link'

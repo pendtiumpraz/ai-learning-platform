@@ -7,7 +7,6 @@ import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Slider } from '@/components/ui/slider'
 import { Badge } from '@/components/ui/badge'
-import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import {
   Play,
@@ -19,7 +18,9 @@ import {
   ArrowLeft,
   Mic,
   Zap,
-  Globe
+  Globe,
+  Code,
+  BookOpen
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -120,8 +121,8 @@ export default function TTSPlaygroundPage() {
 
   useEffect(() => {
     if (audioRef.current) {
-      audioRef.current.volume = volume[0]
-      audioRef.current.playbackRate = rate[0]
+      audioRef.current.volume = volume[0] ?? 0.8
+      audioRef.current.playbackRate = rate[0] ?? 1.0
     }
   }, [volume, rate])
 
@@ -257,7 +258,7 @@ export default function TTSPlaygroundPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-2">
-                <Label>Speed: {rate[0].toFixed(1)}x</Label>
+                <Label>Speed: {(rate[0] ?? 1.0).toFixed(1)}x</Label>
                 <Slider
                   value={rate}
                   onValueChange={setRate}
@@ -269,7 +270,7 @@ export default function TTSPlaygroundPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Pitch: {pitch[0].toFixed(1)}</Label>
+                <Label>Pitch: {(pitch[0] ?? 1.0).toFixed(1)}</Label>
                 <Slider
                   value={pitch}
                   onValueChange={setPitch}
@@ -281,7 +282,7 @@ export default function TTSPlaygroundPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>Volume: {Math.round(volume[0] * 100)}%</Label>
+                <Label>Volume: {Math.round((volume[0] ?? 0.8) * 100)}%</Label>
                 <Slider
                   value={volume}
                   onValueChange={setVolume}

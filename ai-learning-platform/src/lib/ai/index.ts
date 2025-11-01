@@ -1,8 +1,8 @@
-import { AIProvider, AIRequest, AIResponse, LearningContext } from '@/types'
+import { AIProvider, AIRequest, AIResponse, LearningContext } from '../../types/index'
 import { openRouterClient } from './openrouter'
 import { geminiClient } from './gemini'
 import { zAIClient } from './z-ai'
-import { createError, retry } from '@/lib/utils'
+import { createError, retry } from '../utils'
 
 export class AIService {
   private static instance: AIService
@@ -308,7 +308,7 @@ export class AIService {
   async healthCheck(): Promise<Record<AIProvider, boolean>> {
     const results: Record<string, boolean> = {}
 
-    for (const [provider, client] of this.providers.entries()) {
+    for (const [provider, client] of Array.from(this.providers.entries())) {
       try {
         await client.healthCheck()
         results[provider] = true
@@ -325,7 +325,7 @@ export class AIService {
   async getProviderStats(): Promise<Record<AIProvider, any>> {
     const stats: Record<string, any> = {}
 
-    for (const [provider, client] of this.providers.entries()) {
+    for (const [provider, client] of Array.from(this.providers.entries())) {
       try {
         stats[provider] = await client.getStats()
       } catch (error) {

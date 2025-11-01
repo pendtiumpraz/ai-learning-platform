@@ -149,8 +149,8 @@ export const MAX_FILE_SIZES = {
 export class ImageProcessor {
   private config: ImageConfig
 
-  constructor(config: ImageConfig = IMAGE_CONFIGS.analysis) {
-    this.config = config
+  constructor(imageConfig: ImageConfig = IMAGE_CONFIGS.analysis) {
+    this.config = imageConfig
   }
 
   /**
@@ -358,9 +358,9 @@ export class ImageProcessor {
         const colorMap: Record<string, number> = {}
 
         for (let i = 0; i < pixels.length; i += 4) {
-          const r = Math.floor(pixels[i] / 16) * 16
-          const g = Math.floor(pixels[i + 1] / 16) * 16
-          const b = Math.floor(pixels[i + 2] / 16) * 16
+          const r = Math.floor((pixels[i] ?? 0) / 16) * 16
+          const g = Math.floor((pixels[i + 1] ?? 0) / 16) * 16
+          const b = Math.floor((pixels[i + 2] ?? 0) / 16) * 16
           const rgb = `${r},${g},${b}`
 
           colorMap[rgb] = (colorMap[rgb] || 0) + 1
@@ -374,13 +374,13 @@ export class ImageProcessor {
         const totalPixels = pixels.length / 4
         const colors: ColorInfo[] = sortedColors.map(([rgb, count]) => {
           const [r, g, b] = rgb.split(',').map(Number)
-          const hex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`
+          const hex = `#${(r ?? 0).toString(16).padStart(2, '0')}${(g ?? 0).toString(16).padStart(2, '0')}${(b ?? 0).toString(16).padStart(2, '0')}`
 
           return {
             color: rgb,
             hex,
             percentage: (count / totalPixels) * 100,
-            name: this.getColorName(r, g, b)
+            name: this.getColorName(r ?? 0, g ?? 0, b ?? 0)
           }
         })
 
@@ -407,8 +407,8 @@ export class ImageProcessor {
   /**
    * Convert base64 to blob
    */
-  base64ToBlob(base64: string, type: string = 'image/jpeg'): Blob {
-    const byteCharacters = atob(base64.split(',')[1])
+  base64ToBlob(imageBase64: string, imageType: string = 'image/jpeg'): Blob {
+    const byteCharacters = atob(imageBase64.split(',')[1])
     const byteNumbers = new Array(byteCharacters.length)
 
     for (let i = 0; i < byteCharacters.length; i++) {
@@ -416,7 +416,7 @@ export class ImageProcessor {
     }
 
     const byteArray = new Uint8Array(byteNumbers)
-    return new Blob([byteArray], { type })
+    return new Blob([byteArray], { type: imageType })
   }
 
   /**

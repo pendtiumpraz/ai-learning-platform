@@ -222,12 +222,13 @@ export class AudioProcessor {
     try {
       // In a real implementation, this would call the actual TTS API
       const audioBlob = await this.callTTSService(request)
-      const duration = await this.getAudioDuration(audioBlob)
+      const audioDuration = await this.getAudioDuration(audioBlob)
 
       return {
         audioBlob,
-        duration,
+        duration: audioDuration,
         format: this.config.format,
+        processingTime: Date.now() - startTime,
         size: audioBlob.size
       }
     } catch (error) {
@@ -242,9 +243,9 @@ export class AudioProcessor {
     audioBlob: Blob,
     targetConfig?: Partial<AudioConfig>
   ): Promise<Blob> {
-    const config = { ...this.config, ...targetConfig }
+    const finalConfig = { ...this.config, ...targetConfig }
 
-    // Audio processing would happen here
+    // Audio processing would happen here using finalConfig
     // This could include format conversion, compression, etc.
     return audioBlob
   }
@@ -254,9 +255,9 @@ export class AudioProcessor {
    */
   async addMetadata(
     audioBlob: Blob,
-    metadata: AudioMetadata
+    audioMetadata: AudioMetadata
   ): Promise<Blob> {
-    // In a real implementation, this would add ID3 tags or similar
+    // In a real implementation, this would add ID3 tags or similar using audioMetadata
     return audioBlob
   }
 
@@ -321,9 +322,10 @@ export class AudioProcessor {
   /**
    * Private: Call TTS service
    */
-  private async callTTSService(request: TTSRequest): Promise<Blob> {
+  private async callTTSService(ttsRequest: TTSRequest): Promise<Blob> {
     // This is a mock implementation
     // In a real app, this would call Azure Speech, AWS Polly, Google Cloud TTS, etc.
+    // The request would be used to configure the API call
 
     await new Promise(resolve => setTimeout(resolve, 1000)) // Simulate API call
 
@@ -354,9 +356,9 @@ export const AudioUtils = {
    */
   async convertFormat(
     audioBlob: Blob,
-    targetFormat: string
+    audioTargetFormat: string
   ): Promise<Blob> {
-    // Format conversion logic would go here
+    // Format conversion logic would go here using audioTargetFormat
     return audioBlob
   },
 
@@ -365,9 +367,9 @@ export const AudioUtils = {
    */
   async compress(
     audioBlob: Blob,
-    targetBitRate: number
+    audioTargetBitRate: number
   ): Promise<Blob> {
-    // Audio compression logic would go here
+    // Audio compression logic would go here using audioTargetBitRate
     return audioBlob
   },
 

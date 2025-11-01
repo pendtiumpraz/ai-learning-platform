@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
-import { Volume2, ArrowLeft, Play, Pause, RotateCcw, CheckCircle, Code, BookOpen } from 'lucide-react'
+import { ArrowLeft, Play, RotateCcw, CheckCircle, Code, BookOpen } from 'lucide-react'
 
 export default function TTSBasicsPage() {
   const [currentLesson, setCurrentLesson] = useState(0)
@@ -99,7 +99,17 @@ const audioConfig = {
     }
   }
 
-  const currentLessonData = lessons[currentLesson]
+  const currentLessonData = lessons[currentLesson] ?? lessons[0] ?? {
+    id: 0,
+    title: 'No Lesson Available',
+    description: 'Lesson content not found',
+    duration: '0 min',
+    content: {
+      theory: 'No content available.',
+      concepts: [],
+      codeExample: '// No example available'
+    }
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
