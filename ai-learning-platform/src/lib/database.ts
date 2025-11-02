@@ -8,24 +8,34 @@ declare global {
 // Prevent database initialization during build time
 const isBuilding = process.env.VERCEL_ENV === 'production' && typeof window === 'undefined'
 
+// Support both DATABASE_URL and PRISMA_DATABASE_URL
+const getDatabaseUrl = () => {
+  return process.env.DATABASE_URL || process.env.PRISMA_DATABASE_URL
+}
+
 // Export the Prisma client only if not building
 let prismaClient: any = null
 
 if (!isBuilding) {
-  prismaClient = global.prisma || new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  })
+  const databaseUrl = getDatabaseUrl()
+  
+  if (databaseUrl) {
+    prismaClient = global.prisma || new PrismaClient({
+      datasources: {
+        db: {
+          url: databaseUrl
+        }
+      },
+      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    })
 
-  if (process.env.NODE_ENV !== 'production') {
-    global.prisma = prismaClient
+    if (process.env.NODE_ENV !== 'production') {
+      global.prisma = prismaClient
+    }
   }
 }
 
-export const prisma = prismaClient || {
-  achievement: {
-    count: () => Promise.resolve(0)
-  }
-}
+export const prisma = prismaClient
 
 // Helper functions for common database operations
 export async function getUserById(id: string) {
