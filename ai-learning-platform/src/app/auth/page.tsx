@@ -67,28 +67,29 @@ export default function AuthPage() {
     e.preventDefault()
     setIsLoading(true)
     setError('')
+    setSuccess('')
+
+    console.log('🔐 [AUTH-PAGE] Login attempt for:', loginData.email)
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(loginData)
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
+      // Import auth service dynamically to avoid SSR issues
+      const { authService } = await import('@/lib/auth')
+      
+      const result = await authService.login(loginData.email, loginData.password)
+      
+      if (result.success) {
+        console.log('✅ [AUTH-PAGE] Login successful, redirecting...')
         setSuccess('Login successful! Redirecting...')
         setTimeout(() => {
           router.push('/dashboard')
-        }, 1500)
+        }, 1000)
       } else {
-        setError(data.message || 'Login failed')
+        console.log('❌ [AUTH-PAGE] Login failed:', result.error)
+        setError(result.error || 'Login failed')
       }
     } catch (error) {
-      setError('Network error. Please try again.')
+      console.error('❌ [AUTH-PAGE] Unexpected error:', error)
+      setError('An unexpected error occurred. Please try again.')
     } finally {
       setIsLoading(false)
     }
