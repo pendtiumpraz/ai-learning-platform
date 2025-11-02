@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 // Disable static optimization
 export const dynamic = 'force-dynamic'
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     // Test basic database connection
     const { prisma } = await import('@/lib/database')
