@@ -361,7 +361,6 @@ export function AgentBuilder({
             nodeTypes={nodeTypes}
             fitView
             attributionPosition="bottom-left"
-            readOnly={readOnly}
           >
             <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
             <Controls />
