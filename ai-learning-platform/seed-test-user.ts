@@ -1,18 +1,9 @@
 #!/usr/bin/env node
 
-import bcrypt from 'bcryptjs'
+const { PrismaClient } = require('@prisma/client')
+const bcrypt = require('bcryptjs')
 
-// Initialize Prisma client - use require for compatibility
-let PrismaClient: any
-try {
-  const prismaClientModule = require('@prisma/client')
-  PrismaClient = prismaClientModule.PrismaClient || prismaClientModule.default
-} catch (error) {
-  console.error('Failed to import PrismaClient:', error)
-  throw error
-}
-
-const prisma = new PrismaClient()
+const prismaClient = new PrismaClient()
 
 async function main() {
   console.log('🔧 Starting database seeder...')
@@ -21,7 +12,7 @@ async function main() {
     // Create a test user
     const hashedPassword = await bcrypt.hash('test123', 12)
     
-    const testUser = await prisma.user.upsert({
+    const testUser = await prismaClient.user.upsert({
       where: { email: 'test@example.com' },
       update: {},
       create: {
@@ -117,7 +108,7 @@ async function main() {
     ]
 
     for (const achievementData of sampleAchievements) {
-      await prisma.achievement.upsert({
+      await prismaClient.achievement.upsert({
         where: { title: achievementData.title },
         update: {},
         create: achievementData,
@@ -127,7 +118,7 @@ async function main() {
     console.log('✅ Sample achievements created!')
 
     // Create a test learning path
-    await prisma.learningPath.upsert({
+    await prismaClient.learningPath.upsert({
       where: { id: 'test-path-1' },
       update: {},
       create: {
@@ -169,5 +160,5 @@ main()
     process.exit(1)
   })
   .finally(async () => {
-    await prisma.$disconnect()
+    await prismaClient.$disconnect()
   })
