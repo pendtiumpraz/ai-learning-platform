@@ -14,16 +14,6 @@ const registerSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
-    // Prevent execution during build time
-    const isBuildTime = typeof window === 'undefined' && process.env.NODE_ENV === 'production'
-    
-    if (isBuildTime) {
-      return NextResponse.json(
-        { message: 'Registration disabled during build process' },
-        { status: 503 }
-      )
-    }
-
     const body = await request.json()
 
     // Validate input
