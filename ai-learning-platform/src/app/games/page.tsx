@@ -8,7 +8,7 @@ import { GameType, GameResult } from '@/types/game'
 import QuizGame from '@/components/games/quiz-game'
 import WordChallenge from '@/components/games/word-challenge'
 import MemoryGame from '@/components/games/memory-game'
-import { Brain, Trophy, BookOpen, Target, Play, ArrowLeft, Star, Zap, Clock } from 'lucide-react'
+import { Trophy, Target, Play, ArrowLeft, Star, Zap, Clock } from 'lucide-react'
 
 const GAME_TYPES: GameType[] = [
   {
@@ -50,21 +50,17 @@ export default function GamesPage() {
   const [selectedGame, setSelectedGame] = useState<GameType | null>(null)
   const [selectedDifficulty, setSelectedDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium')
   const [gameResults, setGameResults] = useState<GameResult[]>([])
-  const [totalScore, setTotalScore] = useState(0)
-
   useEffect(() => {
     const saved = localStorage.getItem('gameResults')
     if (saved) {
       const results = JSON.parse(saved)
       setGameResults(results)
-      setTotalScore(results.reduce((sum: number, result: GameResult) => sum + result.pointsEarned, 0))
     }
   }, [])
 
   const handleGameComplete = (result: GameResult) => {
     const updatedResults = [...gameResults, result]
     setGameResults(updatedResults)
-    setTotalScore(prev => prev + result.pointsEarned)
     localStorage.setItem('gameResults', JSON.stringify(updatedResults))
     setSelectedGame(null)
   }

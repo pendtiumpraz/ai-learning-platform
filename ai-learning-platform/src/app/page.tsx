@@ -24,18 +24,12 @@ import {
   Shield,
   Award,
   TrendingUp,
-  Clock,
-  UserCheck,
   DollarSign,
   Cpu,
-  Lightbulb,
   HeartHandshake,
   GraduationCap,
   Code,
   Palette,
-  Music,
-  Video,
-  Book,
 } from 'lucide-react'
 
 export default function HomePage() {

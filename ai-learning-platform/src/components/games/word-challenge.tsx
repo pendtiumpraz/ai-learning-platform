@@ -1,11 +1,11 @@
 "use client"
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
+
 import { Clock, BookOpen, Target, Zap, CheckCircle, XCircle, Lightbulb, Star } from 'lucide-react'
 import { GameResult } from '@/types/game'
 
@@ -52,13 +52,7 @@ const WORD_CHALLENGES = {
   ]
 }
 
-interface ChallengeWord {
-  word: string
-  hint: string
-  answer: string
-  options: string[]
-  category: string
-}
+// ChallengeWord interface removed as it's unused
 
 export default function WordChallenge({ onGameComplete, onGameExit, difficulty }: WordChallengeProps) {
   const [gameStarted, setGameStarted] = useState(false)
@@ -72,7 +66,7 @@ export default function WordChallenge({ onGameComplete, onGameExit, difficulty }
   const [usedHints, setUsedHints] = useState(0)
   const [gameStartTime, setGameStartTime] = useState<Date | null>(null)
 
-  const challenges = WORD_CHALLENGES[difficulty] || WORD_CHALLENGES.easy
+  const challenges = WORD_CHALLENGES[difficulty] || WORD_CHALLENGES.easy || []
   const currentChallenge = challenges[currentRound] || challenges[0]
 
   useEffect(() => {
@@ -84,6 +78,7 @@ export default function WordChallenge({ onGameComplete, onGameExit, difficulty }
     } else if (timeRemaining === 0 && !showResult) {
       handleTimeUp()
     }
+    return undefined
   }, [gameStarted, timeRemaining, showResult])
 
   const startGame = () => {
@@ -98,7 +93,7 @@ export default function WordChallenge({ onGameComplete, onGameExit, difficulty }
   }
 
   const handleOptionSelect = (option: string) => {
-    if (showResult) return
+    if (showResult || !currentChallenge) return
     setSelectedOption(option)
     setShowResult(true)
 
@@ -160,7 +155,7 @@ export default function WordChallenge({ onGameComplete, onGameExit, difficulty }
   const getProgressPercentage = () => ((currentRound + 1) / challenges.length) * 100
 
   const getOptionColor = (option: string) => {
-    if (!showResult) {
+    if (!showResult || !currentChallenge) {
       return selectedOption === option ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
     }
 
@@ -239,7 +234,7 @@ export default function WordChallenge({ onGameComplete, onGameExit, difficulty }
       <CardHeader>
         <div className="flex items-center justify-between mb-4">
           <Badge variant="secondary" className="capitalize">
-            {difficulty} • {currentChallenge.category}
+            {difficulty} • {currentChallenge?.category}
           </Badge>
           <div className={`flex items-center gap-2 ${timeRemaining < 20 ? 'text-red-600' : 'text-blue-600'}`}>
             <Clock className="w-4 h-4" />
@@ -261,21 +256,21 @@ export default function WordChallenge({ onGameComplete, onGameExit, difficulty }
       <CardContent className="space-y-6">
         <div className="text-center space-y-4">
           <div className="text-4xl font-bold text-blue-600 mb-2">
-            {currentChallenge.word}
+            {currentChallenge?.word}
           </div>
 
           <div className="text-gray-600 italic">
-            "{currentChallenge.hint}"
+            "{currentChallenge?.hint}"
           </div>
 
           <div className="flex justify-center gap-2">
-            <Badge variant="outline">{currentChallenge.category}</Badge>
+            <Badge variant="outline">{currentChallenge?.category}</Badge>
             <Badge variant="outline">Singkatan</Badge>
           </div>
         </div>
 
         <div className="grid gap-3">
-          {currentChallenge.options.map((option, index) => (
+          {currentChallenge?.options.map((option, index) => (
             <Button
               key={index}
               variant="outline"
@@ -285,10 +280,10 @@ export default function WordChallenge({ onGameComplete, onGameExit, difficulty }
             >
               <div className="flex items-center justify-between w-full">
                 <span>{option}</span>
-                {showResult && option === currentChallenge.answer && (
+                {showResult && currentChallenge && option === currentChallenge.answer && (
                   <CheckCircle className="w-5 h-5 text-green-600" />
                 )}
-                {showResult && selectedOption === option && option !== currentChallenge.answer && (
+                {showResult && currentChallenge && selectedOption === option && option !== currentChallenge.answer && (
                   <XCircle className="w-5 h-5 text-red-600" />
                 )}
               </div>
@@ -315,7 +310,7 @@ export default function WordChallenge({ onGameComplete, onGameExit, difficulty }
                 <div>
                   <div className="font-semibold text-yellow-900">Hint:</div>
                   <div className="text-yellow-800 text-sm">
-                    {currentChallenge.answer.split(' ').map((word, index) => (
+                    {currentChallenge?.answer.split(' ').map((word, index) => (
                       <span key={index}>
                         {index === 0 ? word[0] : word === 'Programming' ? 'Prog...' : word === 'Interface' ? 'Int...' : word === 'Transfer' ? 'Trans...' : word === 'Protocol' ? 'Proto...' : word[0] + '...'}{' '}
                       </span>
@@ -334,12 +329,12 @@ export default function WordChallenge({ onGameComplete, onGameExit, difficulty }
                 <Zap className="w-5 h-5 text-blue-600 mt-0.5" />
                 <div>
                   <div className="font-semibold text-blue-900">
-                    {selectedOption === currentChallenge.answer ? 'Benar!' : 'Salah!'}
+                    {currentChallenge && selectedOption === currentChallenge.answer ? 'Benar!' : 'Salah!'}
                   </div>
                   <div className="text-blue-800 text-sm">
-                    Jawaban yang benar: <strong>{currentChallenge.answer}</strong>
+                    Jawaban yang benar: <strong>{currentChallenge?.answer}</strong>
                   </div>
-                  {selectedOption === currentChallenge.answer && (
+                  {currentChallenge && selectedOption === currentChallenge.answer && (
                     <div className="text-green-600 text-sm mt-1">
                       +{calculatePoints()} points
                     </div>

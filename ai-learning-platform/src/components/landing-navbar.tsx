@@ -6,11 +6,6 @@ import {
   Menu,
   X,
   Brain,
-  Trophy,
-  Users,
-  Phone,
-  Mail,
-  ChevronDown,
   Gamepad2,
 } from 'lucide-react'
 

@@ -49,12 +49,7 @@ interface Edge {
   data?: any;
 }
 
-interface Connection {
-  source: string;
-  target: string;
-  sourceHandle?: string;
-  targetHandle?: string;
-}
+// Connection interface removed as it's unused
 import 'reactflow/dist/style.css';
 import { NodePalette } from './node-palette';
 import { PropertyPanel } from './property-panel';

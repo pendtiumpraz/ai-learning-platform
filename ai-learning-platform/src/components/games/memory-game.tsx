@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -79,6 +79,7 @@ export default function MemoryGame({ onGameComplete, onGameExit, difficulty }: M
     } else if (timeRemaining === 0 || matchedPairs === totalPairs) {
       completeGame()
     }
+    return undefined
   }, [gameStarted, timeRemaining, matchedPairs, totalPairs])
 
   useEffect(() => {
@@ -91,6 +92,7 @@ export default function MemoryGame({ onGameComplete, onGameExit, difficulty }: M
       setShowCardsPreview(false)
       hideAllCards()
     }
+    return undefined
   }, [showCardsPreview, previewTime])
 
   const initializeGame = () => {
@@ -213,7 +215,9 @@ export default function MemoryGame({ onGameComplete, onGameExit, difficulty }: M
     initializeGame()
   }
 
-  const getProgressPercentage = () => (matchedPairs / totalPairs) * 100
+  const getProgressPercentage = () => {
+    return totalPairs > 0 ? (matchedPairs / totalPairs) * 100 : 0
+  }
 
   const getCardColor = (card: MemoryCard) => {
     if (card.isMatched) return 'bg-green-100 border-green-500'

@@ -77,11 +77,11 @@ export default function QuizGame({ onGameComplete, onGameExit, difficulty, categ
   const [correctAnswers, setCorrectAnswers] = useState(0)
   const [gameStarted, setGameStarted] = useState(false)
 
-  const questions = QUIZ_QUESTIONS[category] || QUIZ_QUESTIONS['general']
-  const currentQuestion = gameSession?.questions[gameSession.currentQuestion] || questions[0]
+  const questions = QUIZ_QUESTIONS[category] || QUIZ_QUESTIONS['general'] || []
+  const currentQuestion = gameSession?.questions?.[gameSession.currentQuestion] || questions[0]
 
   useEffect(() => {
-    if (gameStarted && gameSession && gameSession.status === 'in_progress') {
+    if (gameStarted && gameSession && gameSession.status === 'in_progress' && currentQuestion) {
       const timer = setInterval(() => {
         setTimeRemaining((prev) => {
           if (prev <= 1) {
@@ -94,9 +94,12 @@ export default function QuizGame({ onGameComplete, onGameExit, difficulty, categ
 
       return () => clearInterval(timer)
     }
+    return undefined
   }, [gameStarted, gameSession, currentQuestion])
 
   const startGame = useCallback(() => {
+    if (!questions || questions.length === 0) return
+    
     const shuffledQuestions = [...questions]
       .sort(() => Math.random() - 0.5)
       .slice(0, 10)
@@ -120,7 +123,7 @@ export default function QuizGame({ onGameComplete, onGameExit, difficulty, categ
   }, [questions, difficulty])
 
   const handleAnswerSelect = (answerIndex: number) => {
-    if (showResult) return
+    if (showResult || !currentQuestion) return
 
     setSelectedAnswer(answerIndex)
     setShowResult(true)
@@ -144,10 +147,13 @@ export default function QuizGame({ onGameComplete, onGameExit, difficulty, categ
   }
 
   const handleNextQuestion = () => {
-    if (!gameSession) return
+    if (!gameSession || !gameSession.questions) return
 
     if (gameSession.currentQuestion < gameSession.questions.length - 1) {
       const nextQuestion = gameSession.currentQuestion + 1
+      const nextQuestionData = gameSession.questions[nextQuestion]
+      if (!nextQuestionData) return
+      
       const updatedSession = {
         ...gameSession,
         currentQuestion: nextQuestion
@@ -155,7 +161,7 @@ export default function QuizGame({ onGameComplete, onGameExit, difficulty, categ
       setGameSession(updatedSession)
       setSelectedAnswer(null)
       setShowResult(false)
-      setTimeRemaining(gameSession.questions[nextQuestion].timeLimit || 30)
+      setTimeRemaining(nextQuestionData.timeLimit || 30)
     } else {
       // Game completed
       completeGame()
@@ -184,7 +190,7 @@ export default function QuizGame({ onGameComplete, onGameExit, difficulty, categ
   }
 
   const getProgressPercentage = () => {
-    if (!gameSession) return 0
+    if (!gameSession || !gameSession.questions || gameSession.questions.length === 0) return 0
     return ((gameSession.currentQuestion + 1) / gameSession.questions.length) * 100
   }
 
@@ -195,7 +201,7 @@ export default function QuizGame({ onGameComplete, onGameExit, difficulty, categ
   }
 
   const getAnswerColor = (index: number) => {
-    if (!showResult) {
+    if (!showResult || !currentQuestion) {
       return selectedAnswer === index ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
     }
 
@@ -283,11 +289,11 @@ export default function QuizGame({ onGameComplete, onGameExit, difficulty, categ
 
       <CardContent className="space-y-6">
         <div className="text-center">
-          <h3 className="text-xl font-semibold mb-6">{currentQuestion.question}</h3>
+          <h3 className="text-xl font-semibold mb-6">{currentQuestion?.question}</h3>
         </div>
 
         <div className="grid gap-3">
-          {currentQuestion.options.map((option, index) => (
+          {currentQuestion?.options.map((option, index) => (
             <Button
               key={index}
               variant="outline"
@@ -298,9 +304,9 @@ export default function QuizGame({ onGameComplete, onGameExit, difficulty, categ
               <div className="flex items-center justify-between w-full">
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center text-sm font-bold ${
-                    index === currentQuestion.correctAnswer && showResult
+                    currentQuestion && index === currentQuestion.correctAnswer && showResult
                       ? 'border-green-500 bg-green-500 text-white'
-                      : selectedAnswer === index && index !== currentQuestion.correctAnswer && showResult
+                      : currentQuestion && selectedAnswer === index && index !== currentQuestion.correctAnswer && showResult
                       ? 'border-red-500 bg-red-500 text-white'
                       : 'border-gray-300'
                   }`}>
@@ -308,10 +314,10 @@ export default function QuizGame({ onGameComplete, onGameExit, difficulty, categ
                   </div>
                   <span>{option}</span>
                 </div>
-                {showResult && index === currentQuestion.correctAnswer && (
+                {showResult && currentQuestion && index === currentQuestion.correctAnswer && (
                   <CheckCircle className="w-5 h-5 text-green-600" />
                 )}
-                {showResult && selectedAnswer === index && index !== currentQuestion.correctAnswer && (
+                {showResult && currentQuestion && selectedAnswer === index && index !== currentQuestion.correctAnswer && (
                   <XCircle className="w-5 h-5 text-red-600" />
                 )}
               </div>
@@ -319,7 +325,7 @@ export default function QuizGame({ onGameComplete, onGameExit, difficulty, categ
           ))}
         </div>
 
-        {showResult && currentQuestion.explanation && (
+        {showResult && currentQuestion?.explanation && (
           <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
             <div className="flex items-start gap-2">
               <Zap className="w-5 h-5 text-blue-600 mt-0.5" />
