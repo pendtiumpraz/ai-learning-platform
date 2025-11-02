@@ -5,14 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Code, FileText, Braces, Table, Image, MessageSquare, Cpu, Zap } from 'lucide-react'
+import { Code, FileText, Braces, Table, MessageSquare, Cpu, Zap } from 'lucide-react'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism'
 
 interface OutputFormat {
   id: string
   name: string
-  icon: React.ComponentType<{ className?: string }>
+  icon: React.ComponentType<any>
   description: string
   parser: (text: string) => string | object
   example: string
@@ -33,7 +33,7 @@ const OUTPUT_FORMATS: OutputFormat[] = [
         .replace(/^\* (.*$)/gim, '<li class="ml-4">• $1</li>')
         .replace(/^\d+\. (.*$)/gim, '<li class="ml-4">$1.</li>')
         .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-1 py-0.5 rounded text-sm">$1</code>')
-        .replace(/```([^`]+)```/gs, '<pre class="bg-gray-100 p-3 rounded-lg my-3"><code>$1</code></pre>')
+        .replace(/```([^`]+)```/g, '<pre class="bg-gray-100 p-3 rounded-lg my-3"><code>$1</code></pre>')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
         .replace(/\*(.*?)\*/g, '<em>$1</em>')
     },
@@ -122,7 +122,7 @@ const openai = new OpenAIApi(configuration);
         .replace(/^# (.*$)/gim, '<h1 class="text-3xl font-bold">$1</h1>')
         .replace(/^## (.*$)/gim, '<h2 class="text-2xl font-semibold">$1</h2>')
         .replace(/^### (.*$)/gim, '<h3 class="text-xl font-medium">$1</h3>')
-        .replace(/```(.*?)```/gs, '<pre class="bg-gray-100 p-3 rounded"><code>$1</code></pre>')
+        .replace(/```([\s\S]*?)```/g, '<pre class="bg-gray-100 p-3 rounded"><code>$1</code></pre>')
     },
     example: `<h1>LLM Installation Guide</h1>
 <p><strong>Step 1:</strong> Get your API key from OpenAI</p>
@@ -140,9 +140,9 @@ const openai = new OpenAIApi(configuration);
       const lines = text.trim().split('\n');
       if (lines.length < 2) return { error: 'Not enough data for table' };
 
-      const headers = lines[0].split(',').map(h => h.trim());
+      const headers = lines[0]?.split(',').map((h: string) => h.trim()) || [];
       const rows = lines.slice(1).map(line =>
-        line.split(',').map(cell => cell.trim())
+        line?.split(',').map((cell: string) => cell.trim()) || []
       );
 
       return { headers, rows };
@@ -166,7 +166,7 @@ Whisper,Speech-to-Text,Medium,Free Tier`
       while ((match = regex.exec(text)) !== null) {
         codeBlocks.push({
           language: match[1] || 'text',
-          code: match[2].trim()
+          code: match[2]?.trim() || ''
         });
       }
 
@@ -246,23 +246,21 @@ Test your setup with a simple call.`
 
 export default function LLMOutputParser() {
   const [selectedFormat, setSelectedFormat] = useState('markdown');
-  const [inputText, setInputText] = useState(OUTPUT_FORMATS[0].example);
+  const [inputText, setInputText] = useState(OUTPUT_FORMATS[0]?.example || '');
   const [parsedOutput, setParsedOutput] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleParse = () => {
     setIsLoading(true);
     setTimeout(() => {
-      const format = OUTPUT_FORMATS.find(f => f.id === selectedFormat);
-      if (format) {
-        const result = format.parser(inputText);
+      const currentFormat = OUTPUT_FORMATS.find(f => f.id === selectedFormat);
+      if (currentFormat) {
+        const result = currentFormat.parser(inputText);
         setParsedOutput(result);
       }
       setIsLoading(false);
     }, 500);
   };
-
-  const format = OUTPUT_FORMATS.find(f => f.id === selectedFormat);
 
   const renderParsedOutput = () => {
     if (!parsedOutput) return null;
@@ -418,7 +416,7 @@ export default function LLMOutputParser() {
         <TabsList className="grid w-full grid-cols-3 lg:grid-cols-6">
           {OUTPUT_FORMATS.map((format) => (
             <TabsTrigger key={format.id} value={format.id} className="flex items-center gap-2">
-              <format.icon className="w-4 h-4" />
+              {(format.icon as any)({ className: "w-4 h-4" })}
               <span className="hidden sm:inline">{format.name}</span>
             </TabsTrigger>
           ))}
@@ -430,7 +428,7 @@ export default function LLMOutputParser() {
               <CardHeader>
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
-                    <outputFormat.icon className="w-6 h-6 text-white" />
+                    {(outputFormat.icon as any)({ className: "w-6 h-6 text-white" })}
                   </div>
                   <div>
                     <CardTitle>{outputFormat.name} Parser</CardTitle>
@@ -491,7 +489,7 @@ export default function LLMOutputParser() {
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <outputFormat.icon className="w-5 h-5" />
+                    {(outputFormat.icon as any)({ className: "w-5 h-5" })}
                     Parsed Output
                   </CardTitle>
                   <CardDescription>
@@ -506,7 +504,7 @@ export default function LLMOutputParser() {
                   ) : (
                     <div className="h-64 flex items-center justify-center border border-gray-200 rounded-lg bg-gray-50">
                       <div className="text-center text-gray-500">
-                        <outputFormat.icon className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                        {(outputFormat.icon as any)({ className: "w-12 h-12 mx-auto mb-3 opacity-50" })}
                         <p>Click "Parse to {outputFormat.name}" to see the result</p>
                       </div>
                     </div>

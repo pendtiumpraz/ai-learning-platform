@@ -54,14 +54,10 @@ import {
   Bell,
   Flame,
   Award,
-  Code,
   Volume2,
-  Image,
   Eye,
   Cpu,
-  Zap,
   ArrowRight,
-  Play,
   Rocket
 } from 'lucide-react'
 
@@ -418,9 +414,9 @@ export default function Dashboard() {
   }
 
   const handleContinueLearning = (pathId: string, moduleId: string) => {
-    // Navigate to specific tutorial
+    // Navigate to specific tutorial with module
     if (typeof window !== 'undefined') {
-      window.location.href = `/learn/ai-integration?tutorial=${pathId}`
+      window.location.href = `/learn/ai-integration?tutorial=${pathId}&module=${moduleId}`
     }
   }
 
@@ -464,6 +460,12 @@ export default function Dashboard() {
             </div>
 
             <div className="flex items-center space-x-4">
+              <Link href="/learn">
+                <Button variant="outline" className="bg-white text-purple-600 hover:bg-purple-50 hover:text-purple-700 border-purple-300">
+                  <BookOpen className="h-4 w-4 mr-2" />
+                  Learning Center
+                </Button>
+              </Link>
               <Button variant="ghost" size="icon">
                 <Bell className="h-5 w-5" />
               </Button>

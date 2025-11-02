@@ -16,7 +16,6 @@ import {
   Image,
   Eye,
   Cpu,
-  Zap,
   Search,
   Clock,
   Users,
@@ -115,13 +114,13 @@ const AI_TUTORIALS = [
   }
 ];
 
-const DIFFICULTY_COLORS = {
+const DIFFICULTY_COLORS: Record<string, string> = {
   beginner: 'bg-green-100 text-green-800',
   intermediate: 'bg-yellow-100 text-yellow-800',
   advanced: 'bg-red-100 text-red-800'
 };
 
-const CATEGORY_COLORS = {
+const CATEGORY_COLORS: Record<string, string> = {
   llm: 'from-blue-500 to-blue-600',
   tts: 'from-purple-500 to-purple-600',
   vlm: 'from-green-500 to-green-600',

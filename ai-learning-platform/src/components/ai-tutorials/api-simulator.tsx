@@ -6,7 +6,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Send,
@@ -16,8 +15,7 @@ import {
   Volume2,
   Eye,
   Cpu,
-  Zap,
-  Copy,
+    Copy,
   Download,
   PlayCircle,
   Settings
@@ -162,20 +160,26 @@ const API_CONFIGS: Record<string, APIConfig> = {
 };
 
 export default function APISimulator() {
-  const [selectedAPI, setSelectedAPI] = useState('openai-chat');
-  const [requestBody, setRequestBody] = useState(JSON.stringify(API_CONFIGS['openai-chat'].exampleRequest, null, 2));
+  const [selectedAPI, setSelectedAPI] = useState<string>('openai-chat');
+  const [requestBody, setRequestBody] = useState<string>('');
   const [response, setResponse] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('builder');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [activeTab, setActiveTab] = useState<string>('builder');
 
-  const config = API_CONFIGS[selectedAPI];
+  const config = API_CONFIGS[selectedAPI as keyof typeof API_CONFIGS]!;
+
+  // Initialize request body when API selection changes
+  React.useEffect(() => {
+    setRequestBody(JSON.stringify(config.exampleRequest, null, 2));
+    setResponse(null);
+  }, [selectedAPI]);
 
   const simulateAPI = () => {
     setIsLoading(true);
     setActiveTab('response');
 
     setTimeout(() => {
-      setResponse(config.exampleResponse);
+      setResponse(config?.exampleResponse || null);
       setIsLoading(false);
     }, 1500);
   };
@@ -184,8 +188,8 @@ export default function APISimulator() {
     switch (language) {
       case 'javascript':
         if (selectedAPI === 'openai-chat') {
-          return `const response = await fetch('${config.endpoint}', {
-  method: '${config.method}',
+          return `const response = await fetch('${config?.endpoint || ''}', {
+  method: '${config?.method || 'POST'}',
   headers: {
     'Content-Type': 'application/json',
     'Authorization': 'Bearer YOUR_API_KEY'
@@ -196,8 +200,8 @@ export default function APISimulator() {
 const data = await response.json();
 console.log(data.choices[0].message.content);`;
         } else if (selectedAPI === 'elevenlabs-tts') {
-          return `const response = await fetch('${config.endpoint.replace('{voice_id}', 'voice-id')}', {
-  method: '${config.method}',
+          return `const response = await fetch('${config?.endpoint?.replace('{voice_id}', 'voice-id') || ''}', {
+  method: '${config?.method || 'POST'}',
   headers: {
     'Accept': 'audio/mpeg',
     'Content-Type': 'application/json',
@@ -212,9 +216,9 @@ const audio = new Audio(audioUrl);
 audio.play();`;
         }
         return `// JavaScript fetch example
-const response = await fetch('${config.endpoint}', {
-  method: '${config.method}',
-  headers: ${JSON.stringify(config.headers, null, 2)},
+const response = await fetch('${config?.endpoint || ''}', {
+  method: '${config?.method || 'POST'}',
+  headers: ${JSON.stringify(config?.headers || {}, null, 2)},
   body: JSON.stringify(${requestBody})
 });
 
@@ -301,8 +305,6 @@ print(response.json())`;
                 }`}
                 onClick={() => {
                   setSelectedAPI(key);
-                  setRequestBody(JSON.stringify(config.exampleRequest, null, 2));
-                  setResponse(null);
                 }}
               >
                 <div className="flex items-center gap-2 mb-2">

@@ -1,24 +1,19 @@
 "use client"
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism'
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import {
   ArrowLeft,
   Copy,
-  Play,
   Download,
   CheckCircle,
-  AlertCircle,
+  Clock,
   Code,
-  Zap,
-  Globe,
-  Shield,
   Rocket
 } from 'lucide-react'
 
@@ -671,12 +666,12 @@ async function getWeather({ location, unit = 'celsius' }) {
 };
 
 export default function LLMTutorial() {
-  const [activeSection, setActiveSection] = useState('setup');
-  const [copiedCode, setCopiedCode] = useState('');
-  const [progress, setProgress] = useState(0);
-  const [completedSections, setCompletedSections] = useState([]);
+  const [activeSection, setActiveSection] = useState<string>('setup');
+  const [copiedCode, setCopiedCode] = useState<string>('');
+  const [progress, setProgress] = useState<number>(0);
+  const [completedSections, setCompletedSections] = useState<string[]>([]);
 
-  const copyToClipboard = async (text, codeId) => {
+  const copyToClipboard = async (text: string, codeId: string) => {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedCode(codeId);
@@ -686,7 +681,7 @@ export default function LLMTutorial() {
     }
   };
 
-  const markSectionComplete = (sectionId) => {
+  const markSectionComplete = (sectionId: string) => {
     if (!completedSections.includes(sectionId)) {
       setCompletedSections([...completedSections, sectionId]);
       setProgress((completedSections.length + 1) / LLM_TUTORIAL_CONTENT.sections.length * 100);
@@ -794,7 +789,7 @@ export default function LLMTutorial() {
                         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                         .replace(/\*(.*?)\*/g, '<em>$1</em>')
                         .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-1 py-0.5 rounded text-sm">$1</code>')
-                        .replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+                        .replace(/```(\w+)?\n([\s\S]*?)```/g, (_match, _lang, code) => {
                           return `<div class="my-4"><div class="bg-gray-100 p-3 rounded-lg"><pre><code class="text-sm">${code.trim()}</code></pre></div></div>`;
                         })
                         .replace(/^\d+\.\s/gm, '<li class="ml-4">')

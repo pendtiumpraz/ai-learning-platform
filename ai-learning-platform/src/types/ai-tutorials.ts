@@ -57,6 +57,13 @@ export interface DemoInput {
   options?: string[];
 }
 
+export interface DemoStep {
+  title: string;
+  description: string;
+  instruction?: string;
+  expectedOutput?: string;
+}
+
 export interface DemoOutput {
   name: string;
   type: 'text' | 'image' | 'json' | 'audio' | 'video';

@@ -1,16 +1,13 @@
 "use client"
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism'
+import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import {
   ArrowLeft,
   Copy,
@@ -19,13 +16,9 @@ import {
   Volume2,
   Download,
   CheckCircle,
-  AlertCircle,
-  Code,
-  Zap,
-  Globe,
-  Shield,
   Mic,
-  Settings,
+  Code,
+  Rocket,
   Headphones
 } from 'lucide-react'
 
@@ -1392,15 +1385,14 @@ export default AdvancedTTSSpeaker;`,
 };
 
 export default function TTSTutorial() {
-  const [activeSection, setActiveSection] = useState('basics');
-  const [copiedCode, setCopiedCode] = useState('');
-  const [progress, setProgress] = useState(0);
-  const [completedSections, setCompletedSections] = useState([]);
-  const [demoText, setDemoText] = useState('Hello! This is a test of the text-to-speech system.');
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [ttsAudio, setTtsAudio] = useState(null);
+  const [activeSection, setActiveSection] = useState<string>('basics');
+  const [copiedCode, setCopiedCode] = useState<string>('');
+  const [progress, setProgress] = useState<number>(0);
+  const [completedSections, setCompletedSections] = useState<string[]>([]);
+  const [demoText, setDemoText] = useState<string>('Hello! This is a test of the text-to-speech system.');
+  const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
 
-  const copyToClipboard = async (text, codeId) => {
+  const copyToClipboard = async (text: string, codeId: string) => {
     try {
       await navigator.clipboard.writeText(text);
       setCopiedCode(codeId);
@@ -1410,7 +1402,7 @@ export default function TTSTutorial() {
     }
   };
 
-  const markSectionComplete = (sectionId) => {
+  const markSectionComplete = (sectionId: string) => {
     if (!completedSections.includes(sectionId)) {
       setCompletedSections([...completedSections, sectionId]);
       setProgress((completedSections.length + 1) / TTS_TUTORIAL_CONTENT.sections.length * 100);
@@ -1582,7 +1574,7 @@ export default function TTSTutorial() {
                         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                         .replace(/\*(.*?)\*/g, '<em>$1</em>')
                         .replace(/`([^`]+)`/g, '<code class="bg-gray-100 px-1 py-0.5 rounded text-sm">$1</code>')
-                        .replace(/```(\w+)?\n([\s\S]*?)```/g, (match, lang, code) => {
+                        .replace(/```(\w+)?\n([\s\S]*?)```/g, (_match, _lang, code) => {
                           return `<div class="my-4"><div class="bg-gray-100 p-3 rounded-lg"><pre><code class="text-sm">${code.trim()}</code></pre></div></div>`;
                         })
                         .replace(/^\d+\.\s/gm, '<li class="ml-4">')
