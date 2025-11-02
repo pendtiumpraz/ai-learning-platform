@@ -4,13 +4,15 @@
   "description": "AI Learning Game Platform with comprehensive testing framework",
   "scripts": {
     "dev": "next dev -p 3003",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push"
   },
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
