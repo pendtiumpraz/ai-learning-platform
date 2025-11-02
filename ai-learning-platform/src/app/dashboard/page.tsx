@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -357,10 +356,8 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* Header */}
-      <motion.header
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40"
+      <header
+                className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -393,13 +390,11 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-      </motion.header>
+      </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* User Stats Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div
           className="mb-8"
         >
           <Card className="bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white border-0 shadow-2xl">
@@ -437,14 +432,11 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
 
         {/* XP Progress Bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-8"
+        <div
+                    className="mb-8"
         >
           <XPBar
             currentXP={user.totalXP}
@@ -452,14 +444,11 @@ export default function Dashboard() {
             animated={true}
             onLevelUp={() => {}}
           />
-        </motion.div>
+        </div>
 
         {/* Navigation Tabs */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-8"
+        <div
+                    className="mb-8"
         >
           <div className="flex space-x-2 bg-white dark:bg-gray-800 p-2 rounded-xl shadow-lg">
             {[
@@ -479,22 +468,16 @@ export default function Dashboard() {
               </Button>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Dynamic Content Based on Selected View */}
-        <motion.div
+        <div
             key={selectedView}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
+                      >
             {selectedView === 'overview' && (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Streak Tracker */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
+                <div
                 >
                   <StreakTracker
                     currentStreak={user.streak}
@@ -504,13 +487,10 @@ export default function Dashboard() {
                     dailyGoals={{ completed: 3, total: 5 }}
                     onClaimDailyReward={handleClaimDailyReward}
                   />
-                </motion.div>
+                </div>
 
                 {/* Weekly Challenge */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.4 }}
+                <div
                 >
                   <Card className="h-full border-2 border-green-200 dark:border-green-800">
                     <CardHeader className="bg-gradient-to-r from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30">
@@ -564,13 +544,10 @@ export default function Dashboard() {
                       </div>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </div>
 
                 {/* Recent Achievements */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.5 }}
+                <div
                 >
                   <Card className="h-full">
                     <CardHeader>
@@ -613,13 +590,10 @@ export default function Dashboard() {
                       </Button>
                     </CardContent>
                   </Card>
-                </motion.div>
+                </div>
 
                 {/* Learning Progress Overview */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.6 }}
+                <div
                   className="lg:col-span-3"
                 >
                   <LearningProgressCard
@@ -628,7 +602,7 @@ export default function Dashboard() {
                     onContinueLearning={handleContinueLearning}
                     compact={true}
                   />
-                </motion.div>
+                </div>
               </div>
             )}
 
@@ -643,18 +617,15 @@ export default function Dashboard() {
             {selectedView === 'achievements' && (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {achievements.map((achievement, index) => (
-                  <motion.div
+                  <div
                     key={achievement.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
                   >
                     <AchievementCard
                       achievement={achievement}
                       showProgress={true}
                       onUnlock={(id) => console.log('Achievement unlocked:', id)}
                     />
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             )}
@@ -666,7 +637,7 @@ export default function Dashboard() {
                 onUserClick={handleUserClick}
               />
             )}
-          </motion.div>
+          </div>
       </main>
     </div>
   )

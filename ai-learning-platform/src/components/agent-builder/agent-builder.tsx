@@ -106,7 +106,7 @@ export function AgentBuilder({
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [isDirty, setIsDirty] = useState(false);
 
-  const onConnect = useCallback((params: Connection) => {
+  const onConnect = useCallback((params: any) => {
     const newEdge = {
       ...params,
       id: `edge-${Date.now()}`,

@@ -6,11 +6,10 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-// User Management
 model User {
   id                String             @id @default(cuid())
   email             String             @unique
@@ -18,11 +17,11 @@ model User {
   name              String?
   username          String?            @unique
   image             String?
-  role              UserRole           @default(STUDENT)
+  role              String             @default("STUDENT")
   level             Int                @default(1)
   experience        Int                @default(0)
   totalPlayTime     Int                @default(0) // in minutes
-  achievements      Int                @default(0)
+  achievementCount  Int                @default(0)
   streak            Int                @default(0)
   lastActiveAt      DateTime           @default(now())
   createdAt         DateTime           @default(now())
@@ -37,17 +36,7 @@ model User {
   learningPaths      UserLearningPath[]
   progress           Progress[]
   achievements       UserAchievement[]
-  gameStats          GameStats[]
-  studySessions      StudySession[]
-  aiInteractions     AIInteraction[]
-
-  // Social Features
-  friends            UserFriend[]      @relation("UserFriends")
-  friendRequests     FriendRequest[]
-  activityFeed       ActivityFeed[]
-  notifications      Notification[]
-
-  // Preferences
+  gameStats          GameStats?
   preferences        UserPreferences?
 
   @@map("users")
@@ -59,12 +48,12 @@ model Account {
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -83,29 +72,13 @@ model Session {
   @@map("sessions")
 }
 
-// User Profile & Learning Style
 model UserProfile {
   id                  String     @id @default(cuid())
   userId              String     @unique
   bio                 String?
   avatar              String?
-  dateOfBirth         DateTime?
-  timezone            String     @default("UTC")
-  language            String     @default("en")
-
-  // Learning Preferences
-  learningStyle       LearningStyle?
-  difficultyPreference DifficultyLevel @default(ADAPTIVE)
-  preferredSubjects   String[]   // JSON array of subject IDs
-
-  // Goals & Interests
-  learningGoals       String[]   // JSON array
-  interests           String[]   // JSON array
-
-  // Privacy Settings
-  profileVisibility   PrivacyLevel @default(PUBLIC)
-  showProgress        Boolean    @default(true)
-  allowFriendRequests Boolean    @default(true)
+  learningGoals       String?     // JSON string
+  interests           String?     // JSON string
 
   user                User       @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -115,297 +88,28 @@ model UserProfile {
   @@map("user_profiles")
 }
 
-// Learning Content
-model Subject {
-  id          String   @id @default(cuid())
-  name        String   @unique
-  description String?
-  icon        String?
-  color       String   @default("#6366f1")
-  category    String
-  difficulty  DifficultyLevel @default(BEGINNER)
+model GameStats {
+  id              String    @id @default(cuid())
+  userId          String    @unique
+  totalGames      Int       @default(0)
+  gamesWon        Int       @default(0)
+  gamesLost       Int       @default(0)
+  totalScore      Int       @default(0)
+  averageScore    Float     @default(0)
+  bestScore       Int       @default(0)
+  currentStreak   Int       @default(0)
+  bestStreak      Int       @default(0)
+  playTime        Int       @default(0) // in minutes
 
-  // Content
-  modules     Module[]
-  learningPaths LearningPath[]
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  lastPlayedAt    DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  @@map("subjects")
+  @@map("game_stats")
 }
 
-model Module {
-  id            String   @id @default(cuid())
-  subjectId     String
-  title         String
-  description   String?
-  order         Int
-  difficulty    DifficultyLevel @default(BEGINNER)
-  estimatedTime Int      // in minutes
-
-  // Content
-  lessons       Lesson[]
-  quizzes       Quiz[]
-  assignments   Assignment[]
-
-  // Prerequisites
-  prerequisites  Module[] @relation("ModulePrerequisites")
-  prerequisiteOf Module[] @relation("ModulePrerequisiteTargets")
-
-  subject       Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
-
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  @@map("modules")
-}
-
-model Lesson {
-  id          String     @id @default(cuid())
-  moduleId    String
-  title       String
-  content     String     @db.Text
-  type        LessonType @default(TEXT)
-  videoUrl    String?
-  duration    Int?       // in minutes
-  order       Int
-
-  // Interactive Content
-  questions   LessonQuestion[]
-  resources   LessonResource[]
-
-  module      Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-
-  @@map("lessons")
-}
-
-model LessonQuestion {
-  id          String           @id @default(cuid())
-  lessonId    String
-  question    String
-  type        QuestionType
-  options     String[]         // JSON array
-  correctAnswer String
-  explanation String?
-  order       Int
-
-  lesson      Lesson           @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-
-  createdAt   DateTime         @default(now())
-
-  @@map("lesson_questions")
-}
-
-model LessonResource {
-  id          String           @id @default(cuid())
-  lessonId    String
-  title       String
-  type        ResourceType
-  url         String?
-  content     String?          @db.Text
-  order       Int
-
-  lesson      Lesson           @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-
-  createdAt   DateTime         @default(now())
-
-  @@map("lesson_resources")
-}
-
-// Assessment System
-model Quiz {
-  id          String     @id @default(cuid())
-  moduleId    String
-  title       String
-  description String?
-  type        QuizType   @default(KNOWLEDGE_CHECK)
-  timeLimit   Int?       // in minutes
-  passingScore Int       @default(70)
-  maxAttempts Int        @default(3)
-
-  // Questions
-  questions   Question[]
-
-  // Results
-  attempts    QuizAttempt[]
-
-  module      Module     @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-
-  @@map("quizzes")
-}
-
-model Question {
-  id          String           @id @default(cuid())
-  quizId      String
-  question    String
-  type        QuestionType
-  options     String[]         // JSON array
-  correctAnswer String
-  explanation String?
-  points      Int              @default(1)
-  order       Int
-
-  quiz        Quiz             @relation(fields: [quizId], references: [id], onDelete: Cascade)
-
-  createdAt   DateTime         @default(now())
-
-  @@map("questions")
-}
-
-model QuizAttempt {
-  id          String    @id @default(cuid())
-  quizId      String
-  userId      String
-  score       Int
-  maxScore    Int
-  passed      Boolean
-  answers     String    @db.Text // JSON
-  timeSpent   Int       // in seconds
-  attemptNumber Int
-
-  quiz        Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  startedAt   DateTime  @default(now())
-  completedAt DateTime
-
-  @@map("quiz_attempts")
-}
-
-model Assignment {
-  id          String           @id @default(cuid())
-  moduleId    String
-  title       String
-  description String           @db.Text
-  type        AssignmentType
-  dueDate     DateTime?
-  maxScore    Int              @default(100)
-
-  // Submissions
-  submissions AssignmentSubmission[]
-
-  module      Module           @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-
-  @@map("assignments")
-}
-
-model AssignmentSubmission {
-  id            String    @id @default(cuid())
-  assignmentId  String
-  userId        String
-  content       String    @db.Text
-  fileUrl       String?
-  score         Int?
-  feedback      String?   @db.Text
-  status        SubmissionStatus @default(PENDING)
-
-  assignment    Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  submittedAt   DateTime  @default(now())
-  gradedAt      DateTime?
-
-  @@map("assignment_submissions")
-}
-
-// Learning Paths
-model LearningPath {
-  id            String       @id @default(cuid())
-  title         String
-  description   String?
-  subjectId     String?
-  difficulty    DifficultyLevel @default(BEGINNER)
-  estimatedTime Int          // in minutes
-  isPublic      Boolean      @default(true)
-  isRecommended Boolean      @default(false)
-
-  // Content
-  modules       LearningPathModule[]
-
-  // Users
-  users         UserLearningPath[]
-
-  subject       Subject?     @relation(fields: [subjectId], references: [id])
-
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-
-  @@map("learning_paths")
-}
-
-model LearningPathModule {
-  id               String @id @default(cuid())
-  learningPathId   String
-  moduleId         String
-  order            Int
-  isRequired       Boolean @default(true)
-
-  learningPath     LearningPath @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
-
-  @@unique([learningPathId, moduleId])
-  @@map("learning_path_modules")
-}
-
-model UserLearningPath {
-  id             String           @id @default(cuid())
-  userId         String
-  learningPathId String
-  status         ProgressStatus   @default(NOT_STARTED)
-  progress       Float            @default(0)
-  currentModule  String?
-  completedModules String[]       // JSON array
-  startDate      DateTime?
-  completedDate  DateTime?
-  estimatedCompletion DateTime?
-
-  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  learningPath   LearningPath     @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
-
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-
-  @@unique([userId, learningPathId])
-  @@map("user_learning_paths")
-}
-
-// Progress Tracking
-model Progress {
-  id                String         @id @default(cuid())
-  userId            String
-  contentType       ContentType
-  contentId         String
-  status            ProgressStatus @default(NOT_STARTED)
-  completionPercent Float          @default(0)
-  timeSpent         Int            @default(0) // in minutes
-  score             Int?
-  maxScore          Int?
-
-  // Learning Analytics
-  attemptCount      Int            @default(0)
-  firstAttemptDate  DateTime?
-  lastAttemptDate   DateTime?
-  completedAt       DateTime?
-
-  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-
-  @@unique([userId, contentType, contentId])
-  @@map("progress")
-}
-
-// Gamification
 model Achievement {
   id            String           @id @default(cuid())
   title         String
@@ -413,11 +117,8 @@ model Achievement {
   icon          String
   badgeColor    String           @default("#6366f1")
   points        Int              @default(0)
-  type          AchievementType
+  type          String           // COMPLETION, STREAK, SCORE, etc.
   category      String
-
-  // Requirements
-  requirements  AchievementRequirement[]
 
   // Users who earned it
   users         UserAchievement[]
@@ -425,18 +126,6 @@ model Achievement {
   createdAt     DateTime         @default(now())
 
   @@map("achievements")
-}
-
-model AchievementRequirement {
-  id            String           @id @default(cuid())
-  achievementId String
-  type          RequirementType
-  target        Int
-  metric        String
-
-  achievement   Achievement       @relation(fields: [achievementId], references: [id], onDelete: Cascade)
-
-  @@map("achievement_requirements")
 }
 
 model UserAchievement {
@@ -457,356 +146,97 @@ model UserAchievement {
   @@map("user_achievements")
 }
 
-model GameStats {
-  id              String    @id @default(cuid())
-  userId          String
-  totalGames      Int       @default(0)
-  gamesWon        Int       @default(0)
-  gamesLost       Int       @default(0)
-  totalScore      Int       @default(0)
-  averageScore    Float     @default(0)
-  bestScore       Int       @default(0)
-  currentStreak   Int       @default(0)
-  bestStreak      Int       @default(0)
-  playTime        Int       @default(0) // in minutes
-
-  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  lastPlayedAt    DateTime  @default(now())
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
-
-  @@unique([userId])
-  @@map("game_stats")
-}
-
-// Study Sessions
-model StudySession {
-  id            String       @id @default(cuid())
-  userId        String
-  subjectId     String?
-  moduleId      String?
-  type          SessionType
-  duration      Int          // in minutes
-  focusScore    Float?       // 0-100
-  productivity  Float?       // 0-100
-
-  // Content Covered
-  topics        String[]     // JSON array
-  notes         String?      @db.Text
-
-  // AI Insights
-  aiFeedback    String?      @db.Text
-  recommendations String[]    // JSON array
-
-  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  startedAt     DateTime     @default(now())
-  endedAt       DateTime?
-
-  @@map("study_sessions")
-}
-
-// AI Interactions
-model AIInteraction {
-  id            String           @id @default(cuid())
-  userId        String
-  type          InteractionType
-  provider      AIProvider
-  model         String
-  prompt        String           @db.Text
-  response      String           @db.Text
-  tokensUsed    Int?
-  cost          Float?
-
-  // Feedback
-  rating        Int?             // 1-5
-  feedback      String?          @db.Text
-
-  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt     DateTime         @default(now())
-
-  @@map("ai_interactions")
-}
-
-// Social Features
-model UserFriend {
-  id            String    @id @default(cuid())
-  userId        String
-  friendId      String
-
-  user          User      @relation("UserFriends", fields: [userId], references: [id], onDelete: Cascade)
-  friend        User      @relation("UserFriends", fields: [friendId], references: [id], onDelete: Cascade)
-
-  createdAt     DateTime  @default(now())
-
-  @@unique([userId, friendId])
-  @@map("user_friends")
-}
-
-model FriendRequest {
-  id            String          @id @default(cuid())
-  senderId      String
-  receiverId    String
-  status        FriendStatus    @default(PENDING)
-  message       String?
-
-  sender        User            @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  receiver      User            @relation(fields: [receiverId], references: [id], onDelete: Cascade)
-
-  createdAt     DateTime        @default(now())
-  respondedAt   DateTime?
-
-  @@map("friend_requests")
-}
-
-model ActivityFeed {
-  id            String          @id @default(cuid())
-  userId        String
-  type          ActivityType
-  description   String
-  metadata      String?         // JSON
-  isPublic      Boolean         @default(true)
-
-  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt     DateTime        @default(now())
-
-  @@map("activity_feed")
-}
-
-model Notification {
-  id            String           @id @default(cuid())
-  userId        String
-  type          NotificationType
-  title         String
-  message       String
-  data          String?          // JSON
-  isRead        Boolean          @default(false)
-
-  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt     DateTime         @default(now())
-  readAt        DateTime?
-
-  @@map("notifications")
-}
-
 model UserPreferences {
-  id            String           @id @default(cuid())
-  userId        String           @unique
+  id            String    @id @default(cuid())
+  userId        String    @unique
 
   // UI Preferences
-  theme         ThemeType        @default(LIGHT)
-  language      String           @default("en")
-  timezone      String           @default("UTC")
+  theme         String    @default("LIGHT")
+  language      String    @default("en")
+  timezone      String    @default("UTC")
 
   // Learning Preferences
-  dailyGoal     Int              @default(30) // minutes
-  reminderTime  String?          // HH:MM format
-  autoPlayNext  Boolean          @default(true)
-  showHints     Boolean          @default(true)
+  dailyGoal     Int       @default(30) // minutes
+  autoPlayNext  Boolean   @default(true)
+  showHints     Boolean   @default(true)
 
   // Notification Preferences
-  emailNotifications Boolean     @default(true)
-  pushNotifications  Boolean     @default(true)
-  reminderNotifications Boolean  @default(true)
-  achievementNotifications Boolean @default(true)
-  friendActivityNotifications Boolean @default(true)
+  emailNotifications Boolean  @default(true)
+  pushNotifications  Boolean  @default(true)
 
   // Privacy Preferences
-  shareProgress Boolean          @default(true)
-  showOnlineStatus Boolean       @default(true)
-  allowDataCollection Boolean    @default(true)
+  shareProgress Boolean   @default(true)
+  showOnlineStatus Boolean @default(true)
 
-  user          User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   @@map("user_preferences")
 }
 
-// Enums
-enum UserRole {
-  STUDENT
-  TEACHER
-  ADMIN
-  SUPER_ADMIN
+model UserLearningPath {
+  id             String           @id @default(cuid())
+  userId         String
+  learningPathId String
+  status         String           @default("NOT_STARTED")
+  progress       Float            @default(0)
+  currentModule  String?
+  completedModules String?         // JSON string
+  startDate      DateTime?
+  completedDate  DateTime?
+
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  learningPath   LearningPath     @relation(fields: [learningPathId], references: [id], onDelete: Cascade)
+
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@unique([userId, learningPathId])
+  @@map("user_learning_paths")
 }
 
-enum LearningStyle {
-  VISUAL
-  AUDITORY
-  KINESTHETIC
-  READING
-  MIXED
+model Progress {
+  id                String         @id @default(cuid())
+  userId            String
+  contentType       String         // LESSON, QUIZ, etc.
+  contentId         String
+  status            String         @default("NOT_STARTED")
+  completionPercent Float          @default(0)
+  timeSpent         Int            @default(0) // in minutes
+  score             Int?
+  maxScore          Int?
+
+  // Learning Analytics
+  attemptCount      Int            @default(0)
+  firstAttemptDate  DateTime?
+  lastAttemptDate   DateTime?
+  completedAt       DateTime?
+
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@unique([userId, contentType, contentId])
+  @@map("progress")
 }
 
-enum DifficultyLevel {
-  BEGINNER
-  INTERMEDIATE
-  ADVANCED
-  EXPERT
-  ADAPTIVE
-}
+model LearningPath {
+  id            String       @id @default(cuid())
+  title         String
+  description   String?
+  difficulty    String       @default("BEGINNER")
+  estimatedTime Int          // in minutes
+  isPublic      Boolean      @default(true)
+  isRecommended Boolean      @default(false)
 
-enum LessonType {
-  TEXT
-  VIDEO
-  INTERACTIVE
-  EXERCISE
-  PROJECT
-}
+  // Users
+  users         UserLearningPath[]
 
-enum QuestionType {
-  MULTIPLE_CHOICE
-  TRUE_FALSE
-  SHORT_ANSWER
-  ESSAY
-  FILL_BLANK
-  MATCHING
-  DRAG_DROP
-}
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 
-enum ResourceType {
-  TEXT
-  IMAGE
-  VIDEO
-  LINK
-  PDF
-  CODE
-  INTERACTIVE
-}
-
-enum QuizType {
-  KNOWLEDGE_CHECK
-  PRACTICE_TEST
-  FINAL_EXAM
-  POP_QUIZ
-}
-
-enum AssignmentType {
-  ESSAY
-  PROJECT
-  CODE
-  PRESENTATION
-  RESEARCH
-  PRACTICE
-}
-
-enum SubmissionStatus {
-  PENDING
-  GRADED
-  RETURNED
-  DRAFT
-}
-
-enum ContentType {
-  LESSON
-  QUIZ
-  ASSIGNMENT
-  MODULE
-  SUBJECT
-  LEARNING_PATH
-}
-
-enum ProgressStatus {
-  NOT_STARTED
-  IN_PROGRESS
-  COMPLETED
-  PAUSED
-  FAILED
-}
-
-enum AchievementType {
-  COMPLETION
-  STREAK
-  SCORE
-  TIME
-  SOCIAL
-  SPECIAL
-}
-
-enum RequirementType {
-  MODULES_COMPLETED
-  LESSONS_COMPLETED
-  QUIZZES_PASSED
-  ASSIGNMENTS_COMPLETED
-  STUDY_TIME
-  STREAK_DAYS
-  SCORE_ACHIEVED
-  FRIENDS_ADDED
-}
-
-enum SessionType {
-  STUDY
-  PRACTICE
-  REVIEW
-  GAME
-  ASSESSMENT
-  PROJECT
-}
-
-enum InteractionType {
-  QUESTION
-  EXPLANATION
-  FEEDBACK
-  TUTORING
-  CONTENT_GENERATION
-  ANALYSIS
-}
-
-enum AIProvider {
-  OPENROUTER
-  GEMINI
-  Z_AI
-  OPENAI
-  CLAUDE
-}
-
-enum PrivacyLevel {
-  PUBLIC
-  FRIENDS_ONLY
-  PRIVATE
-}
-
-enum FriendStatus {
-  PENDING
-  ACCEPTED
-  DECLINED
-  BLOCKED
-}
-
-enum ActivityType {
-  ACHIEVEMENT_EARNED
-  LEVEL_UP
-  MODULE_COMPLETED
-  QUIZ_PASSED
-  STREAK_ACHIEVED
-  FRIEND_ADDED
-  LEARNING_PATH_STARTED
-  LEARNING_PATH_COMPLETED
-  GAME_PLAYED
-  HIGH_SCORE
-}
-
-enum NotificationType {
-  ACHIEVEMENT
-  REMINDER
-  FRIEND_REQUEST
-  MESSAGE
-  SYSTEM
-  PROGRESS
-  LEARNING_PATH
-  ASSIGNMENT_DUE
-  QUIZ_AVAILABLE
-  STREAK_WARNING
-}
-
-enum ThemeType {
-  LIGHT
-  DARK
-  SYSTEM
+  @@map("learning_paths")
 }

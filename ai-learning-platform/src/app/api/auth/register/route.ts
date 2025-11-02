@@ -62,8 +62,8 @@ export async function POST(request: NextRequest) {
         },
         profile: {
           create: {
-            learningGoals: ['Complete first module', 'Earn first achievement'],
-            interests: ['AI', 'Programming', 'Game Development'],
+            learningGoals: JSON.stringify(['Complete first module', 'Earn first achievement']),
+            interests: JSON.stringify(['AI', 'Programming', 'Game Development']),
           }
         },
         gameStats: {
