@@ -32,22 +32,10 @@ const BackgroundVariant = {
   Dots: 'dots'
 };
 
-// Define types locally to avoid import issues
-interface Node {
-  id: string;
-  type: string;
-  position: { x: number; y: number };
-  data: any;
-}
-
-interface Edge {
-  id: string;
-  source: string;
-  target: string;
-  sourceHandle?: string;
-  targetHandle?: string;
-  data?: any;
-}
+// Use any type to avoid ReactFlow type conflicts during development
+// In a production environment, you'd want to properly type these with ReactFlow's actual types
+type Node = any
+type Edge = any
 
 // Connection interface removed as it's unused
 import 'reactflow/dist/style.css';
