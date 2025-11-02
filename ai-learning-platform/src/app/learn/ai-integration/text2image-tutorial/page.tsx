@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import AuthWrapper from '@/components/auth/auth-wrapper'
+
 import {
   ArrowLeft,
   Copy,
@@ -387,7 +387,6 @@ print(f"Generated {len(batch_results)} images")`
   const currentSection = sections.find(s => s.id === activeSection)
 
   return (
-    <AuthWrapper title="Text-to-Image Generation Tutorial" description="Sign in to access comprehensive text-to-image tutorials with hands-on practice">
       <div className="max-w-6xl mx-auto p-4">
         <div className="mb-6">
           <Link href="/learn/ai-integration" className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-4">
@@ -727,6 +726,5 @@ print(f"Generated {len(batch_results)} images")`
           </TabsContent>
         </Tabs>
       </div>
-    </AuthWrapper>
   )
 }

@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { tomorrow } from 'react-syntax-highlighter/dist/esm/styles/prism'
-import AuthWrapper from '@/components/auth/auth-wrapper'
+
 import {
   ArrowLeft,
   Copy,
@@ -1055,7 +1055,7 @@ module.exports = {
   const currentSection = sections.find(s => s.id === activeSection)
 
   return (
-    <AuthWrapper title="API Integration Best Practices" description="Sign in to access comprehensive API integration tutorials">
+    <div className="max-w-6xl mx-auto p-4">
       <div className="max-w-6xl mx-auto p-4">
         <div className="mb-6">
           <Link href="/learn/ai-integration" className="inline-flex items-center text-blue-600 hover:text-blue-800 mb-4">
@@ -1336,6 +1336,6 @@ module.exports = {
           </TabsContent>
         </Tabs>
       </div>
-    </AuthWrapper>
+    </div>
   )
 }

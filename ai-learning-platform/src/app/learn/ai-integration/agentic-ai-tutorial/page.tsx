@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import AuthWrapper from '@/components/auth/auth-wrapper';
+
 import { ArrowLeft, Brain, Target, Network, Code, Play, CheckCircle, Cpu, Globe, Shield, Sparkles, Rocket, Settings, Layers, GitBranch, Activity, Database, Cloud, Bot, Puzzle, TrendingUp } from 'lucide-react';
 
 const AgenticAITutorial = () => {
@@ -2721,7 +2721,7 @@ if (typeof window !== 'undefined') {
   const currentSection = sections[activeSection];
 
   return (
-    <AuthWrapper title="Agentic AI Tutorial" description="Master the art of building autonomous AI agents">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-8">
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 p-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
@@ -3296,7 +3296,7 @@ if (typeof window !== 'undefined') {
           </div>
         </div>
       </div>
-    </AuthWrapper>
+    </div>
   );
 };
 
