@@ -25,7 +25,10 @@ import {
   Play,
   BookOpen,
   Rocket,
-  CheckCircle
+  CheckCircle,
+  MessageSquare,
+  Bot,
+  Shield
 } from 'lucide-react'
 
 const AI_TUTORIALS = [

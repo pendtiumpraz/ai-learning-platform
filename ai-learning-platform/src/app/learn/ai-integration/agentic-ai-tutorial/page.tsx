@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import AuthWrapper from '@/components/auth/auth-wrapper';
-import { ArrowLeft, Brain, Zap, Target, Network, Code, Play, CheckCircle, AlertCircle, Cpu, Globe, Shield, Sparkles, Rocket, Settings, Layers, GitBranch, Activity, Database, Cloud, Bot, Puzzle, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Brain, Target, Network, Code, Play, CheckCircle, Cpu, Globe, Shield, Sparkles, Rocket, Settings, Layers, GitBranch, Activity, Database, Cloud, Bot, Puzzle, TrendingUp } from 'lucide-react';
 
 const AgenticAITutorial = () => {
   const [activeSection, setActiveSection] = useState(0);
@@ -2779,14 +2779,14 @@ if (typeof window !== 'undefined') {
             {/* Left Content */}
             <div className="xl:col-span-2 space-y-8">
               {/* Section Content */}
-              <div className={`${currentSection.bgColor} rounded-2xl p-8 shadow-xl`}>
+              <div className={`${currentSection?.bgColor || 'bg-gray-50'} rounded-2xl p-8 shadow-xl`}>
                 <div className="flex items-center gap-3 mb-6">
                   <div className={`p-3 bg-white rounded-xl shadow-md`}>
-                    <currentSection.icon className={`w-8 h-8 ${currentSection.color}`} />
+                    {currentSection && <currentSection.icon className={`w-8 h-8 ${currentSection.color}`} />}
                   </div>
                   <div>
-                    <h2 className="text-3xl font-bold text-gray-900">{currentSection.title}</h2>
-                    <p className="text-gray-600 mt-1">{currentSection.content.overview}</p>
+                    <h2 className="text-3xl font-bold text-gray-900">{currentSection?.title || 'Loading...'}</h2>
+                    <p className="text-gray-600 mt-1">{currentSection?.content?.overview || ''}</p>
                   </div>
                 </div>
 
@@ -2797,12 +2797,12 @@ if (typeof window !== 'undefined') {
                     Key Topics Covered
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    {currentSection.content.keyTopics.map((topic, index) => (
+                    {currentSection?.content?.keyTopics?.map((topic, index) => (
                       <div key={index} className="flex items-start gap-3">
                         <CheckCircle className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
                         <span className="text-gray-700">{topic}</span>
                       </div>
-                    ))}
+                    )) || []}
                   </div>
                 </div>
 
