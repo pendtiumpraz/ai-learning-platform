@@ -392,72 +392,72 @@ export default function AIIntegrationPage() {
               ].map((tutorial) => (
                 <Link key={tutorial.id} href={tutorial.link} className="block">
                   <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-                  <CardHeader className="pb-3">
-                    <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${CATEGORY_COLORS[tutorial.category]} flex items-center justify-center mb-3`}>
-                      <tutorial.icon className="w-6 h-6 text-white" />
-                    </div>
-                    <div className="flex items-center justify-between mb-2">
-                      <Badge className={DIFFICULTY_COLORS[tutorial.difficulty]}>
-                        {tutorial.difficulty}
-                      </Badge>
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                        <span className="text-sm font-medium">{tutorial.rating}</span>
+                    <CardHeader className="pb-3">
+                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-r ${CATEGORY_COLORS[tutorial.category]} flex items-center justify-center mb-3`}>
+                        <tutorial.icon className="w-6 h-6 text-white" />
                       </div>
-                    </div>
-                    <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
-                      {tutorial.title}
-                    </CardTitle>
-                    <CardDescription className="line-clamp-2">
-                      {tutorial.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="pt-0">
-                    <div className="space-y-3">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-between mb-2">
                         <Badge className={DIFFICULTY_COLORS[tutorial.difficulty]}>
                           {tutorial.difficulty}
                         </Badge>
-                        <Badge variant="outline" className="text-xs">
-                          {tutorial.duration}
-                        </Badge>
+                        <div className="flex items-center gap-1">
+                          <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                          <span className="text-sm font-medium">{tutorial.rating}</span>
+                        </div>
                       </div>
-
+                      <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
+                        {tutorial.title}
+                      </CardTitle>
                       <CardDescription className="line-clamp-2">
                         {tutorial.description}
                       </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="space-y-3">
+                        <div className="flex items-center gap-2">
+                          <Badge className={DIFFICULTY_COLORS[tutorial.difficulty]}>
+                            {tutorial.difficulty}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs">
+                            {tutorial.duration}
+                          </Badge>
+                        </div>
 
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
-                        <div className="flex items-center gap-1">
-                          <Star className="w-3 h-3 text-yellow-500 fill-current" />
-                          {tutorial.rating}
+                        <CardDescription className="line-clamp-2">
+                          {tutorial.description}
+                        </CardDescription>
+
+                        <div className="flex items-center gap-4 text-sm text-gray-600">
+                          <div className="flex items-center gap-1">
+                            <Star className="w-3 h-3 text-yellow-500 fill-current" />
+                            {tutorial.rating}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Users className="w-3 h-3" />
+                            {tutorial.students}
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Users className="w-3 h-3" />
-                          {tutorial.students}
+
+                        <div className="space-y-2">
+                          <div className="text-sm font-medium text-gray-700">
+                            What you'll learn:
+                          </div>
+                          <div className="space-y-1">
+                            {tutorial.features.map((feature, idx) => (
+                              <div key={idx} className="flex items-center text-xs text-gray-600">
+                                <CheckCircle className="w-3 h-3 text-green-500 mr-1 flex-shrink-0" />
+                                {feature}
+                              </div>
+                            ))}
+                          </div>
                         </div>
+
+                        <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
+                          <Play className="w-4 h-4 mr-2" />
+                          Start Learning
+                        </Button>
                       </div>
-
-                      <div className="space-y-2">
-                        <div className="text-sm font-medium text-gray-700">
-                          What you'll learn:
-                        </div>
-                        <div className="space-y-1">
-                          {tutorial.features.map((feature, idx) => (
-                            <div key={idx} className="flex items-center text-xs text-gray-600">
-                              <CheckCircle className="w-3 h-3 text-green-500 mr-1 flex-shrink-0" />
-                              {feature}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <Button className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
-                        <Play className="w-4 h-4 mr-2" />
-                        Start Learning
-                      </Button>
-                    </div>
-                  </CardContent>
+                    </CardContent>
                 </Card>
                 </Link>
               ))}
