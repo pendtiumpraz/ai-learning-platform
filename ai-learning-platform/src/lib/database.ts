@@ -1,6 +1,6 @@
-// Support both DATABASE_URL and PRISMA_DATABASE_URL
+// Support Vercel Prisma Postgres auto-generated URLs
 const getDatabaseUrl = () => {
-  return process.env.DATABASE_URL || process.env.PRISMA_DATABASE_URL
+  return process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.PRISMA_DATABASE_URL
 }
 
 declare global {
