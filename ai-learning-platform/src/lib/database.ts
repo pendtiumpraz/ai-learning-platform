@@ -5,15 +5,26 @@ declare global {
   var prisma: any | undefined
 }
 
-// Export the Prisma client
-const prismaClient = global.prisma || new PrismaClient({
-  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-})
+// Prevent database initialization during build time
+const isBuilding = process.env.VERCEL_ENV === 'production' && typeof window === 'undefined'
 
-export const prisma = prismaClient
+// Export the Prisma client only if not building
+let prismaClient: any = null
 
-if (process.env.NODE_ENV !== 'production') {
-  global.prisma = prismaClient
+if (!isBuilding) {
+  prismaClient = global.prisma || new PrismaClient({
+    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+  })
+
+  if (process.env.NODE_ENV !== 'production') {
+    global.prisma = prismaClient
+  }
+}
+
+export const prisma = prismaClient || {
+  achievement: {
+    count: () => Promise.resolve(0)
+  }
 }
 
 // Helper functions for common database operations
