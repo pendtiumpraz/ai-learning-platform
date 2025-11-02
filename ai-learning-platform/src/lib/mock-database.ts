@@ -100,6 +100,10 @@ export const mockDatabase = {
       return Array.from(mockUsers.values())
     },
 
+    async count(_where?: any) {
+      return mockUsers.size
+    },
+
     async create(data: any) {
       const id = generateId()
       const now = new Date()
