@@ -23,18 +23,27 @@ export default function AuthWrapper({ children, title = "Learning Content", desc
 
   const checkAuth = async () => {
     try {
+      // Enhanced cookie logging for debugging
+      console.log('🔍 [AUTH-DEBUG] Starting auth check...')
+      console.log('🔍 [AUTH-DEBUG] Document cookie:', document.cookie)
+      
       // Simple token check first - just check if auth token exists
       const cookies = document.cookie.split(';')
+      console.log('🔍 [AUTH-DEBUG] Parsed cookies:', cookies)
+      
       const authCookie = cookies.find(cookie => cookie.trim().startsWith('auth-token='))
+      console.log('🔍 [AUTH-DEBUG] Found auth cookie:', authCookie)
 
       if (!authCookie) {
-        console.log('No auth token found in cookies')
+        console.log('❌ [AUTH-DEBUG] No auth token found in cookies')
+        console.log('❌ [AUTH-DEBUG] All cookies:', cookies.map(c => c.trim()))
         setIsAuthenticated(false)
         setIsLoading(false)
         return
       }
 
       // Token exists, now try to validate it with API
+      console.log('🔍 [AUTH-DEBUG] Making API request to /api/auth/me')
       const response = await fetch('/api/auth/me', {
         method: 'GET',
         credentials: 'include',
@@ -43,20 +52,31 @@ export default function AuthWrapper({ children, title = "Learning Content", desc
         }
       })
 
+      console.log('🔍 [AUTH-DEBUG] API response status:', response.status)
+      console.log('🔍 [AUTH-DEBUG] API response headers:', Object.fromEntries(response.headers.entries()))
+
       if (response.ok) {
         const data = await response.json()
-        console.log('Auth check successful:', data.user?.email)
+        console.log('✅ [AUTH-DEBUG] Auth check successful:', data.user?.email)
         setIsAuthenticated(true)
         setUser(data.user)
       } else {
-        console.log('API auth check failed, status:', response.status)
+        const errorText = await response.text()
+        console.log('❌ [AUTH-DEBUG] API auth check failed, status:', response.status)
+        console.log('❌ [AUTH-DEBUG] Error response:', errorText)
         setIsAuthenticated(false)
       }
 
     } catch (error) {
-      console.error('Auth check failed:', error)
+      console.error('❌ [AUTH-DEBUG] Auth check failed with exception:', error)
+      console.error('❌ [AUTH-DEBUG] Error details:', {
+        name: (error as any)?.name,
+        message: (error as any)?.message,
+        stack: (error as any)?.stack
+      })
       setIsAuthenticated(false)
     } finally {
+      console.log('🔍 [AUTH-DEBUG] Auth check completed, setting loading to false')
       setIsLoading(false)
     }
   }

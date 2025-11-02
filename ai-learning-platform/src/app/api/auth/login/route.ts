@@ -15,11 +15,15 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('🔍 [API-LOGIN] ===== STARTING LOGIN REQUEST =====')
+    
     const body = await request.json()
+    console.log('🔍 [API-LOGIN] Login attempt for email:', body.email)
 
     // Validate input
     const validation = loginSchema.safeParse(body)
     if (!validation.success) {
+      console.log('❌ [API-LOGIN] Validation failed:', validation.error.errors)
       return NextResponse.json(
         { message: validation.error.errors[0]?.message || 'Validation failed' },
         { status: 400 }
@@ -27,11 +31,15 @@ export async function POST(request: NextRequest) {
     }
 
     const { email, password } = validation.data
+    console.log('🔍 [API-LOGIN] Email validated successfully:', email)
 
     // Dynamically import database client
+    console.log('🔍 [API-LOGIN] Importing database client...')
     const { prisma } = await import('@/lib/database')
+    console.log('🔍 [API-LOGIN] Database client imported:', !!prisma)
 
     // Find user with their account
+    console.log('🔍 [API-LOGIN] Fetching user from database...')
     const user = await prisma.user.findUnique({
       where: { email },
       include: {
@@ -48,11 +56,14 @@ export async function POST(request: NextRequest) {
     })
 
     if (!user) {
+      console.log('❌ [API-LOGIN] User not found for email:', email)
       return NextResponse.json(
         { message: 'Invalid email or password' },
         { status: 401 }
       )
     }
+
+    console.log('✅ [API-LOGIN] User found:', { id: user.id, email: user.email })
 
     // Get the stored password hash from accounts
     const credentialAccount = user.accounts.find(
@@ -60,28 +71,37 @@ export async function POST(request: NextRequest) {
     )
 
     if (!credentialAccount || !credentialAccount.access_token) {
+      console.log('❌ [API-LOGIN] No valid credential account found')
       return NextResponse.json(
         { message: 'Invalid email or password' },
         { status: 401 }
       )
     }
+
+    console.log('🔍 [API-LOGIN] Credential account found')
 
     // Verify password
+    console.log('🔍 [API-LOGIN] Verifying password...')
     const isValidPassword = await bcrypt.compare(password, credentialAccount.access_token)
     if (!isValidPassword) {
+      console.log('❌ [API-LOGIN] Invalid password')
       return NextResponse.json(
         { message: 'Invalid email or password' },
         { status: 401 }
       )
     }
 
+    console.log('✅ [API-LOGIN] Password verified successfully')
+
     // Update last active
+    console.log('🔍 [API-LOGIN] Updating last active timestamp...')
     await prisma.user.update({
       where: { id: user.id },
       data: { lastActiveAt: new Date() }
     })
 
     // Create JWT token
+    console.log('🔍 [API-LOGIN] Creating JWT token...')
     const token = jwt.sign(
       {
         userId: user.id,
@@ -91,8 +111,10 @@ export async function POST(request: NextRequest) {
       JWT_SECRET,
       { expiresIn: '7d' }
     )
+    console.log('✅ [API-LOGIN] JWT token created successfully')
 
     // Create session
+    console.log('🔍 [API-LOGIN] Creating session in database...')
     await prisma.session.create({
       data: {
         sessionToken: token,
@@ -100,6 +122,7 @@ export async function POST(request: NextRequest) {
         expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
       }
     })
+    console.log('✅ [API-LOGIN] Session created successfully')
 
     // Calculate user level based on experience
     const calculateLevel = (experience: number) => {
@@ -133,6 +156,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Set HTTP-only cookie
+    console.log('🔍 [API-LOGIN] Setting auth cookie...')
     const response = NextResponse.json({
       message: 'Login successful',
       user: userResponse,
@@ -147,10 +171,25 @@ export async function POST(request: NextRequest) {
       path: '/'
     })
 
+    console.log('✅ [API-LOGIN] Auth cookie set successfully')
+    console.log('✅ [API-LOGIN] Cookie settings:', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60,
+      path: '/'
+    })
+    console.log('🔍 [API-LOGIN] ===== LOGIN COMPLETED SUCCESSFULLY =====')
+
     return response
 
   } catch (error) {
-    console.error('Login error:', error)
+    console.error('❌ [API-LOGIN] Login error:', error)
+    console.error('❌ [API-LOGIN] Error details:', {
+      name: (error as any)?.name,
+      message: (error as any)?.message,
+      stack: (error as any)?.stack
+    })
     return NextResponse.json(
       { message: 'Internal server error' },
       { status: 500 }
