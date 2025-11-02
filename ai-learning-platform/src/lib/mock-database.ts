@@ -262,6 +262,11 @@ export const mockDatabase = {
       ]
     },
 
+    async count(where?: any) {
+      // Return count of mock achievements
+      return 2 // We have 2 mock achievements
+    },
+
     async upsert(data: any) {
       // Mock upsert - just return mock achievement
       return {

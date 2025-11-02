@@ -138,6 +138,11 @@ export const prisma = {
       if (!prismaInstance) throw new Error('Database not connected')
       return prismaInstance.achievement.findMany(...args)
     },
+    count: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.achievement.count(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.achievement.count(...args)
+    },
     upsert: async (...args: any[]) => {
       if (useMockDB && mockDatabase) return mockDatabase.achievement.upsert(...args)
       if (!prismaInstance) throw new Error('Database not connected')
