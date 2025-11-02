@@ -5,24 +5,17 @@ const getDatabaseUrl = () => {
 
 declare global {
   var prisma: any | undefined
-  var useMockDatabase: boolean | undefined
 }
 
-// Simple Prisma client initialization
-const databaseUrl = getDatabaseUrl()
-
-if (!databaseUrl) {
-  console.warn('⚠️ No database URL found. Using mock database for development.')
-  global.useMockDatabase = true
-}
-
-// Initialize Prisma client - use require for compatibility
+// Initialize Prisma client directly - no mock fallback
 let PrismaClient: any
 let prismaInstance: any = null
-let useMockDB = false
 
 try {
-  if (databaseUrl && databaseUrl !== 'postgresql://username:password@localhost:5432/ai_learning_platform') {
+  const databaseUrl = getDatabaseUrl()
+  console.log('🔧 Database URL:', databaseUrl ? 'Found' : 'Not found')
+  
+  if (databaseUrl) {
     const prismaClientModule = require('@prisma/client')
     PrismaClient = prismaClientModule.PrismaClient || prismaClientModule.default
     
@@ -38,33 +31,22 @@ try {
     if (process.env.NODE_ENV !== 'production') {
       global.prisma = prismaInstance
     }
+    
+    console.log('✅ Prisma client initialized successfully')
   } else {
-    useMockDB = true
-    console.log('🔧 Using mock database for development')
+    console.log('⚠️ No database URL found')
   }
 } catch (error) {
-  console.error('⚠️ Failed to connect to database. Using mock database:', error)
-  useMockDB = true
-}
-
-// Import mock database if needed
-let mockDatabase: any = null
-if (useMockDB) {
-  try {
-    const { mockDatabase: mockDB } = require('./mock-database')
-    mockDatabase = mockDB
-  } catch (error) {
-    console.error('Failed to load mock database:', error)
-  }
+  console.error('❌ Failed to initialize Prisma client:', error)
+  throw error // Don't use mock, throw error instead
 }
 
 
 // Direct Prisma client export
-export const prisma = prismaInstance || (useMockDB ? mockDatabase : null)
+export const prisma = prismaInstance
 
 // Keep backward compatibility
 export const oldPrisma = prismaInstance
-export { useMockDB }
 
 // Helper functions for common database operations
 export async function getUserById(id: string) {
