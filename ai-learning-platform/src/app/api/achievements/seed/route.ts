@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/database'
 
 // Disable static optimization
 export const dynamic = 'force-dynamic'
@@ -238,6 +237,17 @@ const DEFAULT_ACHIEVEMENTS = [
 
 export async function POST(_request: NextRequest) {
   try {
+    // Prevent execution during build time
+    if (process.env.NODE_ENV === 'production' && typeof window === 'undefined') {
+      return NextResponse.json(
+        { message: 'Seeding disabled during build process' },
+        { status: 503 }
+      )
+    }
+
+    // Dynamically import database client
+    const { prisma } = await import('@/lib/database')
+
     // Check if achievements already exist
     const existingCount = await prisma.achievement.count()
 
