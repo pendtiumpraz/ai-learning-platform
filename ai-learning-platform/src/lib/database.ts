@@ -1,15 +1,20 @@
-// Use dynamic import to avoid TypeScript type issues
-const PrismaClient = require('@prisma/client').PrismaClient
+// Use require for PrismaClient to avoid SSR issues
+const { PrismaClient } = require('@prisma/client')
 
 declare global {
   var prisma: any | undefined
 }
 
-export const prisma = global.prisma ?? new PrismaClient({
-  log: ['query'],
+// Export the Prisma client
+const prismaClient = global.prisma || new PrismaClient({
+  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
 })
 
-if (process.env.NODE_ENV !== 'production') global.prisma = prisma
+export const prisma = prismaClient
+
+if (process.env.NODE_ENV !== 'production') {
+  global.prisma = prismaClient
+}
 
 // Helper functions for common database operations
 export async function getUserById(id: string) {
