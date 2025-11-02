@@ -1,7 +1,16 @@
 #!/usr/bin/env node
 
-import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
+
+// Initialize Prisma client - use require for compatibility
+let PrismaClient: any
+try {
+  const prismaClientModule = require('@prisma/client')
+  PrismaClient = prismaClientModule.PrismaClient || prismaClientModule.default
+} catch (error) {
+  console.error('Failed to import PrismaClient:', error)
+  throw error
+}
 
 const prisma = new PrismaClient()
 
@@ -70,9 +79,11 @@ async function main() {
     })
 
     console.log('✅ Test user created successfully!')
-    console.log('📧 Email: test@example.com')
+    console.log('🆔 User ID:', testUser.id)
+    console.log('📧 Email:', testUser.email)
+    console.log('👤 Username:', testUser.username)
     console.log('🔑 Password: test123')
-    console.log('👤 Username: testuser')
+    console.log('📊 Level:', testUser.level, '| XP:', testUser.experience)
 
     // Create some sample achievements
     const sampleAchievements = [
