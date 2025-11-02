@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import { prisma } from '@/lib/database'
 import { z } from 'zod'
+
+// Disable static optimization
+export const dynamic = 'force-dynamic'
 
 const registerSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -12,6 +14,16 @@ const registerSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    // Prevent execution during build time
+    const isBuildTime = typeof window === 'undefined' && process.env.NODE_ENV === 'production'
+    
+    if (isBuildTime) {
+      return NextResponse.json(
+        { message: 'Registration disabled during build process' },
+        { status: 503 }
+      )
+    }
+
     const body = await request.json()
 
     // Validate input
@@ -24,6 +36,9 @@ export async function POST(request: NextRequest) {
     }
 
     const { name, email, username, password } = validation.data
+
+    // Dynamically import database client
+    const { prisma } = await import('@/lib/database')
 
     // Check if user already exists
     const existingUser = await prisma.user.findFirst({
