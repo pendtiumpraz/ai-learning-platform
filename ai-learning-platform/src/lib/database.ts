@@ -1,13 +1,10 @@
-// Use require for PrismaClient to avoid SSR issues
-const { PrismaClient } = require('@prisma/client')
-
-declare global {
-  var prisma: any | undefined
-}
-
 // Support both DATABASE_URL and PRISMA_DATABASE_URL
 const getDatabaseUrl = () => {
   return process.env.DATABASE_URL || process.env.PRISMA_DATABASE_URL
+}
+
+declare global {
+  var prisma: any | undefined
 }
 
 // Simple Prisma client initialization
@@ -17,16 +14,26 @@ if (!databaseUrl) {
   console.warn('No database URL found. Please set DATABASE_URL or PRISMA_DATABASE_URL environment variable.')
 }
 
-export const prisma = global.prisma || new PrismaClient({
+// Initialize Prisma client - use require for compatibility
+let PrismaClient: any
+try {
+  const prismaClientModule = require('@prisma/client')
+  PrismaClient = prismaClientModule.PrismaClient || prismaClientModule.default
+} catch (error) {
+  console.error('Failed to import PrismaClient:', error)
+  PrismaClient = null
+}
+
+export const prisma = global.prisma || (PrismaClient ? new PrismaClient({
   datasources: databaseUrl ? {
     db: {
       url: databaseUrl
     }
   } : undefined,
   log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-})
+}) : null)
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== 'production' && prisma) {
   global.prisma = prisma
 }
 
