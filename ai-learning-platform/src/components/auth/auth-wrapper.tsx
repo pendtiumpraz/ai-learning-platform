@@ -23,18 +23,36 @@ export default function AuthWrapper({ children, title = "Learning Content", desc
 
   const checkAuth = async () => {
     try {
+      // Simple token check first - just check if auth token exists
+      const cookies = document.cookie.split(';')
+      const authCookie = cookies.find(cookie => cookie.trim().startsWith('auth-token='))
+
+      if (!authCookie) {
+        console.log('No auth token found in cookies')
+        setIsAuthenticated(false)
+        setIsLoading(false)
+        return
+      }
+
+      // Token exists, now try to validate it with API
       const response = await fetch('/api/auth/me', {
         method: 'GET',
-        credentials: 'include'
+        credentials: 'include',
+        headers: {
+          'Cache-Control': 'no-cache'
+        }
       })
 
       if (response.ok) {
         const data = await response.json()
+        console.log('Auth check successful:', data.user?.email)
         setIsAuthenticated(true)
         setUser(data.user)
       } else {
+        console.log('API auth check failed, status:', response.status)
         setIsAuthenticated(false)
       }
+
     } catch (error) {
       console.error('Auth check failed:', error)
       setIsAuthenticated(false)

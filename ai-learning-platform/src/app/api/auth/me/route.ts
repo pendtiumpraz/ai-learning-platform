@@ -18,42 +18,22 @@ export async function GET(request: NextRequest) {
     }
 
     // Verify and decode token
-    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string }
+    const decoded = jwt.verify(token, JWT_SECRET) as { userId: string, email: string, username: string }
 
     // Dynamically import database client
     const { prisma } = await import('@/lib/database')
 
-    // Fetch user with all related data
+    // Fetch basic user info first (minimal query)
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      include: {
-        profile: true,
-        gameStats: true,
-        preferences: true,
-        achievements: {
-          include: {
-            achievement: true
-          }
-        },
-        learningPaths: {
-          include: {
-            learningPath: {
-              include: {
-                modules: {
-                  include: {
-                    module: true
-                  }
-                }
-              }
-            }
-          }
-        },
-        progress: {
-          orderBy: {
-            updatedAt: 'desc'
-          },
-          take: 10
-        }
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        username: true,
+        image: true,
+        role: true,
+        lastActiveAt: true
       }
     })
 
@@ -64,38 +44,13 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Calculate user level based on experience
-    const calculateLevel = (experience: number) => {
-      return Math.floor(experience / 100) + 1
-    }
+    // Update last active timestamp
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { lastActiveAt: new Date() }
+    })
 
-    const currentLevel = calculateLevel(user.experience)
-    const experienceForNextLevel = currentLevel * 100
-    const experienceProgress = ((user.experience % 100) / 100) * 100
-
-    // Calculate win rate for games
-    const calculateWinRate = (gamesWon: number, gamesLost: number) => {
-      const total = gamesWon + gamesLost
-      return total > 0 ? Math.round((gamesWon / total) * 100) : 0
-    }
-
-    // Prepare learning paths with progress
-    const learningPathsWithProgress = user.learningPaths.map((ulp: any) => ({
-      id: ulp.learningPath.id,
-      title: ulp.learningPath.title,
-      description: ulp.learningPath.description,
-      difficulty: ulp.learningPath.difficulty,
-      estimatedTime: ulp.learningPath.estimatedTime,
-      progress: ulp.progress,
-      status: ulp.status,
-      modules: ulp.learningPath.modules.map((lpm: any) => ({
-        id: lpm.module.id,
-        title: lpm.module.title,
-        completed: ulp.completedModules.includes(lpm.moduleId)
-      }))
-    }))
-
-    // Prepare response
+    // Prepare simple response
     const userResponse = {
       id: user.id,
       name: user.name,
@@ -103,25 +58,7 @@ export async function GET(request: NextRequest) {
       username: user.username,
       image: user.image,
       role: user.role,
-      level: currentLevel,
-      experience: user.experience,
-      experienceForNextLevel,
-      experienceProgress,
-      totalPlayTime: user.totalPlayTime,
-      achievements: user.achievements.filter((ua: any) => ua.completed).length,
-      streak: user.streak,
-      lastActiveAt: user.lastActiveAt,
-      profile: user.profile,
-      gameStats: {
-        ...user.gameStats,
-        winRate: calculateWinRate(user.gameStats.gamesWon, user.gameStats.gamesLost)
-      },
-      preferences: user.preferences,
-      unlockedAchievements: user.achievements
-        .filter((ua: any) => ua.completed)
-        .map((ua: any) => ua.achievement),
-      learningPaths: learningPathsWithProgress,
-      recentProgress: user.progress
+      lastActiveAt: user.lastActiveAt
     }
 
     return NextResponse.json({
