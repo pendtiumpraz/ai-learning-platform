@@ -102,6 +102,15 @@ export default function HomePage() {
               <Button
                 size="lg"
                 variant="outline"
+                className="text-lg px-8 py-6 border-2 hover:border-green-500 hover:text-green-600 transition-all duration-300"
+                onClick={() => window.location.href = '/games'}
+              >
+                <Gamepad2 className="w-5 h-5 mr-2" />
+                Play Games
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
                 className="text-lg px-8 py-6 border-2 hover:border-blue-500 hover:text-blue-600 transition-all duration-300"
                 onClick={() => scrollToSection('pricing')}
               >

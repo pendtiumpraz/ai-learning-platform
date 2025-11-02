@@ -11,6 +11,7 @@ import {
   Phone,
   Mail,
   ChevronDown,
+  Gamepad2,
 } from 'lucide-react'
 
 export default function LandingNavbar() {
@@ -28,12 +29,19 @@ export default function LandingNavbar() {
 
   const navLinks = [
     { label: 'Features', href: '#features' },
+    { label: 'Games', href: '/games', isExternal: true },
     { label: 'Pricing', href: '#pricing' },
     { label: 'Contact', href: '#contact' },
     { label: 'About', href: '#about' },
   ]
 
-  const scrollToSection = (href: string) => {
+  const scrollToSection = (href: string, isExternal = false) => {
+    if (isExternal) {
+      window.location.href = href
+      setIsMobileMenuOpen(false)
+      return
+    }
+
     const element = document.querySelector(href)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
@@ -65,12 +73,13 @@ export default function LandingNavbar() {
               {navLinks.map((link) => (
                 <button
                   key={link.label}
-                  onClick={() => scrollToSection(link.href)}
-                  className={`text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 ${
+                  onClick={() => scrollToSection(link.href, link.isExternal)}
+                  className={`text-sm font-medium transition-colors hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-1 ${
                     isScrolled ? 'text-gray-900 dark:text-gray-100' : 'text-gray-700 dark:text-gray-200'
                   }`}
                 >
                   {link.label}
+                  {link.label === 'Games' && <Gamepad2 className="w-4 h-4" />}
                 </button>
               ))}
             </div>
@@ -110,10 +119,11 @@ export default function LandingNavbar() {
                 {navLinks.map((link) => (
                   <button
                     key={link.label}
-                    onClick={() => scrollToSection(link.href)}
-                    className="text-left py-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                    onClick={() => scrollToSection(link.href, link.isExternal)}
+                    className="text-left py-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center gap-2"
                   >
                     {link.label}
+                    {link.label === 'Games' && <Gamepad2 className="w-4 h-4" />}
                   </button>
                 ))}
                 <div className="flex flex-col space-y-3 pt-3 border-t border-gray-200 dark:border-gray-700">
