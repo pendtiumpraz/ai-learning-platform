@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const validation = loginSchema.safeParse(body)
     if (!validation.success) {
       return NextResponse.json(
-        { message: validation.error.errors[0].message },
+        { message: validation.error.errors[0]?.message || 'Validation failed' },
         { status: 400 }
       )
     }
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
       profile: user.profile,
       gameStats: user.gameStats,
       preferences: user.preferences,
-      unlockedAchievements: user.achievements.filter(ua => ua.completed).map(ua => ua.achievement)
+      unlockedAchievements: user.achievements.filter((ua: any) => ua.completed).map((ua: any) => ua.achievement)
     }
 
     // Set HTTP-only cookie

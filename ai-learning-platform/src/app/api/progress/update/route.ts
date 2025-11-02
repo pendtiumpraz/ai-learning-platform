@@ -155,8 +155,7 @@ export async function POST(request: NextRequest) {
       timeSpent,
       score,
       maxScore,
-      completed,
-      metadata
+      completed
     } = body
 
     // Validate required fields
@@ -207,7 +206,7 @@ export async function POST(request: NextRequest) {
     })
 
     let totalXPEarned = 0
-    let newAchievements = []
+    let newAchievements: any[] = []
     let levelUp = false
     let streakBonus = 0
 

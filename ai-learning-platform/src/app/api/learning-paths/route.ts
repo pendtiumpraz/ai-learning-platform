@@ -63,7 +63,7 @@ export async function GET(request: NextRequest) {
     })
 
     // Transform the data to match expected format
-    const transformedPaths = learningPaths.map(path => {
+    const transformedPaths = learningPaths.map((path: any) => {
       const userProgress = path.users?.[0]
       const totalModules = path.modules.length
       const completedModules = userProgress ? userProgress.completedModules.length : 0
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
         totalModules,
         currentModule: userProgress?.currentModule,
         completedDate: userProgress?.completedDate,
-        modules: path.modules.map(lpm => ({
+        modules: path.modules.map((lpm: any) => ({
           id: lpm.module.id,
           title: lpm.module.title,
           description: lpm.module.description,
@@ -93,7 +93,7 @@ export async function GET(request: NextRequest) {
           difficulty: lpm.module.difficulty,
           estimatedTime: lpm.module.estimatedTime,
           lessonCount: lpm.module.lessons.length,
-          totalDuration: lpm.module.lessons.reduce((sum, lesson) => sum + (lesson.duration || 0), 0),
+          totalDuration: lpm.module.lessons.reduce((sum: number, lesson: any) => sum + (lesson.duration || 0), 0),
           completed: userProgress?.completedModules.includes(lpm.moduleId) || false
         })),
         enrolled: !!userProgress,

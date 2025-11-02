@@ -36,7 +36,7 @@ async function getUserFromToken(request: NextRequest) {
   }
 }
 
-async function updateGameStats(userId: string, gameType: string, score: number, won: boolean, timeSpent: number) {
+async function updateGameStats(userId: string, _gameType: string, score: number, won: boolean, timeSpent: number) {
   // Get current game stats
   const currentStats = await prisma.gameStats.findUnique({
     where: { userId: userId }
@@ -88,7 +88,7 @@ async function updateGameStats(userId: string, gameType: string, score: number, 
   }
 }
 
-async function checkGameAchievements(userId: string, gameType: string, score: number, stats: any) {
+async function checkGameAchievements(userId: string, _gameType: string, score: number, stats: any) {
   const achievements = []
 
   // First game achievement
@@ -234,8 +234,7 @@ export async function POST(request: NextRequest) {
       score,
       maxScore = 100,
       won = false,
-      timeSpent = 0,
-      metadata = {}
+      timeSpent = 0
     } = body
 
     // Validate required fields
@@ -248,23 +247,23 @@ export async function POST(request: NextRequest) {
 
     // Calculate XP based on game type and performance
     let xpEarned = 0
-    const gameConfig = GAME_XP_REWARDS[gameType.toUpperCase()]
+    const gameConfig = GAME_XP_REWARDS[gameType.toUpperCase() as keyof typeof GAME_XP_REWARDS]
 
     if (gameConfig) {
       xpEarned = gameConfig.base_score
 
-      // Perfect score bonus
-      if (score >= maxScore) {
+      // Perfect score bonus (only for quiz games)
+      if (score >= maxScore && 'perfect_multiplier' in gameConfig) {
         xpEarned = Math.floor(xpEarned * gameConfig.perfect_multiplier)
       }
 
-      // Speed bonus (if completed quickly)
-      if (timeSpent && timeSpent < 300 && gameConfig.speed_bonus) { // Less than 5 minutes
+      // Speed bonus (only for quiz games)
+      if (timeSpent && timeSpent < 300 && 'speed_bonus' in gameConfig && gameConfig.speed_bonus) { // Less than 5 minutes
         xpEarned += gameConfig.speed_bonus
       }
 
-      // Streak bonus
-      if (gameConfig.streak_bonus && won) {
+      // Streak bonus (only for quiz games)
+      if ('streak_bonus' in gameConfig && gameConfig.streak_bonus && won) {
         xpEarned += gameConfig.streak_bonus
       }
     } else {
@@ -438,7 +437,7 @@ export async function GET(request: NextRequest) {
         playTime: 0
       },
       globalRank,
-      recentGames: recentGames.map(game => ({
+      recentGames: recentGames.map((game: any) => ({
         id: game.id,
         gameType: JSON.parse(game.metadata || '{}').gameType,
         score: JSON.parse(game.metadata || '{}').score,

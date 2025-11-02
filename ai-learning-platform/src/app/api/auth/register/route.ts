@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     const validation = registerSchema.safeParse(body)
     if (!validation.success) {
       return NextResponse.json(
-        { message: validation.error.errors[0].message },
+        { message: validation.error.errors[0]?.message || 'Validation failed' },
         { status: 400 }
       )
     }
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
 
     if (initialAchievements.length > 0) {
       await prisma.userAchievement.createMany({
-        data: initialAchievements.map(achievement => ({
+        data: initialAchievements.map((achievement: any) => ({
           userId: user.id,
           achievementId: achievement.id,
           progress: 0,

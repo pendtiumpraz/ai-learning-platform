@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Prepare learning paths with progress
-    const learningPathsWithProgress = user.learningPaths.map(ulp => ({
+    const learningPathsWithProgress = user.learningPaths.map((ulp: any) => ({
       id: ulp.learningPath.id,
       title: ulp.learningPath.title,
       description: ulp.learningPath.description,
@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       estimatedTime: ulp.learningPath.estimatedTime,
       progress: ulp.progress,
       status: ulp.status,
-      modules: ulp.learningPath.modules.map(lpm => ({
+      modules: ulp.learningPath.modules.map((lpm: any) => ({
         id: lpm.module.id,
         title: lpm.module.title,
         completed: ulp.completedModules.includes(lpm.moduleId)
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
       experienceForNextLevel,
       experienceProgress,
       totalPlayTime: user.totalPlayTime,
-      achievements: user.achievements.filter(ua => ua.completed).length,
+      achievements: user.achievements.filter((ua: any) => ua.completed).length,
       streak: user.streak,
       lastActiveAt: user.lastActiveAt,
       profile: user.profile,
@@ -113,8 +113,8 @@ export async function GET(request: NextRequest) {
       },
       preferences: user.preferences,
       unlockedAchievements: user.achievements
-        .filter(ua => ua.completed)
-        .map(ua => ua.achievement),
+        .filter((ua: any) => ua.completed)
+        .map((ua: any) => ua.achievement),
       learningPaths: learningPathsWithProgress,
       recentProgress: user.progress
     }
