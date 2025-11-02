@@ -4,6 +4,9 @@ import { prisma } from '@/lib/database'
 import { z } from 'zod'
 import jwt from 'jsonwebtoken'
 
+// Disable static optimization
+export const dynamic = 'force-dynamic'
+
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(1, 'Password is required'),

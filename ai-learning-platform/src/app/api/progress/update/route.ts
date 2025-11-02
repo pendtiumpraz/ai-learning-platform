@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/database'
 import jwt from 'jsonwebtoken'
 
+// Disable static optimization
+export const dynamic = 'force-dynamic'
+
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
 
 // XP rewards for different activities
