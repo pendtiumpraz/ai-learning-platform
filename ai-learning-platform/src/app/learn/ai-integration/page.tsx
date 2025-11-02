@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import LLMOutputParser from '@/components/ai-tutorials/llm-output-parser'
 import APISimulator from '@/components/ai-tutorials/api-simulator'
+import AuthWrapper from '@/components/auth/auth-wrapper'
 import {
   Brain,
   Code,
@@ -111,6 +112,20 @@ const AI_TUTORIALS = [
     students: 723,
     modules: 6,
     project: 'Secure API Implementation'
+  },
+  {
+    id: 'agentic-ai',
+    title: 'Agentic AI Systems',
+    description: 'Build autonomous AI agents that can think, plan, and execute complex tasks',
+    category: 'agents',
+    difficulty: 'advanced',
+    duration: '120 min',
+    icon: Brain,
+    tags: ['Autonomous', 'Multi-Agent', 'Orchestration'],
+    rating: 4.9,
+    students: 287,
+    modules: 12,
+    project: 'Enterprise Agent System'
   }
 ];
 
@@ -146,7 +161,8 @@ export default function AIIntegrationPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <AuthWrapper title="AI Integration Tutorials" description="Sign in to access comprehensive AI integration tutorials and hands-on practice">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-10">
         <div className="container mx-auto px-4 py-6">
@@ -277,7 +293,7 @@ export default function AIIntegrationPage() {
             </Card>
 
             {/* Tutorial Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {[
                 {
                   id: 'llm-tutorial',
@@ -304,6 +320,71 @@ export default function AIIntegrationPage() {
                   students: 856,
                   link: '/learn/ai-integration/tts-tutorial',
                   features: ['Web Speech API', 'ElevenLabs', 'Voice Cloning', 'Audio Controls']
+                },
+                {
+                  id: 'vlm-tutorial',
+                  title: 'Vision Language Models (VLM)',
+                  description: 'Master image analysis and computer vision with AI-powered visual understanding',
+                  category: 'vlm',
+                  difficulty: 'intermediate',
+                  duration: '50 min',
+                  icon: Eye,
+                  rating: 4.9,
+                  students: 623,
+                  link: '/learn/ai-integration/vlm-tutorial',
+                  features: ['Image Analysis', 'Text Extraction', 'Object Detection', 'Multi-image Processing']
+                },
+                {
+                  id: 'text2image-tutorial',
+                  title: 'Text-to-Image Generation',
+                  description: 'Create stunning images from text using DALL-E, Stable Diffusion, and more',
+                  category: 'image',
+                  difficulty: 'intermediate',
+                  duration: '40 min',
+                  icon: Image,
+                  rating: 4.7,
+                  students: 945,
+                  link: '/learn/ai-integration/text2image-tutorial',
+                  features: ['DALL-E Integration', 'Prompt Engineering', 'Style Control', 'Batch Generation']
+                },
+                {
+                  id: 'prompting-tutorial',
+                  title: 'AI Prompting Masterclass',
+                  description: 'Master the art and science of effective AI prompting for better results',
+                  category: 'prompting',
+                  difficulty: 'beginner',
+                  duration: '35 min',
+                  icon: MessageSquare,
+                  rating: 4.9,
+                  students: 1567,
+                  link: '/learn/ai-integration/prompting-tutorial',
+                  features: ['Zero-shot Learning', 'Few-shot Examples', 'Chain of Thought', 'Advanced Techniques']
+                },
+                {
+                  id: 'ai-agents-tutorial',
+                  title: 'AI Agent Development',
+                  description: 'Create intelligent autonomous AI agents that can perform complex tasks',
+                  category: 'agents',
+                  difficulty: 'advanced',
+                  duration: '60 min',
+                  icon: Bot,
+                  rating: 4.8,
+                  students: 743,
+                  link: '/learn/ai-integration/ai-agents-tutorial',
+                  features: ['Reactive Agents', 'Proactive Systems', 'Multi-Agent Orchestration', 'Real-time Simulations']
+                },
+                {
+                  id: 'api-best-practices-tutorial',
+                  title: 'API Best Practices',
+                  description: 'Production-ready AI API integration with security, performance, and monitoring',
+                  category: 'api',
+                  difficulty: 'advanced',
+                  duration: '45 min',
+                  icon: Shield,
+                  rating: 4.9,
+                  students: 892,
+                  link: '/learn/ai-integration/api-best-practices-tutorial',
+                  features: ['Security Implementation', 'Performance Optimization', 'Monitoring Systems', 'Production Deployment']
                 }
               ].map((tutorial) => (
                 <Link key={tutorial.id} href={tutorial.link} className="block">
@@ -401,6 +482,7 @@ export default function AIIntegrationPage() {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+      </div>
+    </AuthWrapper>
   );
 }
