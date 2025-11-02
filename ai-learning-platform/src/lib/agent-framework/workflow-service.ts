@@ -25,13 +25,22 @@ export class WorkflowService {
     return true
   }
 
-  async loadWorkflow(id: string): Promise<{ nodes: WorkflowNode[], edges: WorkflowEdge[] } | null> {
+  async loadWorkflow(_id: string): Promise<{ nodes: WorkflowNode[], edges: WorkflowEdge[] } | null> {
     return { nodes: [], edges: [] }
   }
 
-  async validateWorkflow(nodes: WorkflowNode[], edges: WorkflowEdge[]): Promise<boolean> {
+  async validateWorkflow(_nodes: WorkflowNode[], _edges: WorkflowEdge[]): Promise<boolean> {
     return true
   }
 }
 
-export const workflowService = new WorkflowService()
+const workflowService = new WorkflowService()
+
+export const saveWorkflow = (nodes: WorkflowNode[], edges: WorkflowEdge[]) =>
+  workflowService.saveWorkflow(nodes, edges)
+export const executeWorkflow = (nodes: WorkflowNode[], edges: WorkflowEdge[]) =>
+  workflowService.executeWorkflow(nodes, edges)
+export const loadWorkflow = (id: string) => workflowService.loadWorkflow(id)
+export const validateWorkflow = (nodes: WorkflowNode[], edges: WorkflowEdge[]) =>
+  workflowService.validateWorkflow(nodes, edges)
+export { workflowService }

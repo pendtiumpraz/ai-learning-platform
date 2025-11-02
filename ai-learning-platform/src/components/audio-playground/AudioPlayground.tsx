@@ -18,7 +18,7 @@ import {
   Mic,
   Settings,
   Headphones,
-  Waveform,
+  AudioWaveform,
   Zap
 } from 'lucide-react'
 
@@ -90,7 +90,6 @@ export interface AudioPlaygroundProps {
 }
 
 export const AudioPlayground: React.FC<AudioPlaygroundProps> = ({
-  apiKey,
   onAudioGenerated
 }) => {
   const [text, setText] = useState('Welcome to the audio playground! This is an interactive demonstration of text-to-speech technology.')
@@ -310,7 +309,7 @@ export const AudioPlayground: React.FC<AudioPlaygroundProps> = ({
               <Label>Speed: {voiceSettings.rate.toFixed(1)}x</Label>
               <Slider
                 value={[voiceSettings.rate]}
-                onValueChange={([value]) => setVoiceSettings(prev => ({ ...prev, rate: value }))}
+                onValueChange={([value]) => setVoiceSettings(prev => ({ ...prev, rate: value || 1.0 }))}
                 min={0.5}
                 max={2.0}
                 step={0.1}
@@ -322,7 +321,7 @@ export const AudioPlayground: React.FC<AudioPlaygroundProps> = ({
               <Label>Pitch: {voiceSettings.pitch.toFixed(1)}</Label>
               <Slider
                 value={[voiceSettings.pitch]}
-                onValueChange={([value]) => setVoiceSettings(prev => ({ ...prev, pitch: value }))}
+                onValueChange={([value]) => setVoiceSettings(prev => ({ ...prev, pitch: value || 1.0 }))}
                 min={0.5}
                 max={1.5}
                 step={0.1}
@@ -334,7 +333,7 @@ export const AudioPlayground: React.FC<AudioPlaygroundProps> = ({
               <Label>Volume: {Math.round(voiceSettings.volume * 100)}%</Label>
               <Slider
                 value={[voiceSettings.volume]}
-                onValueChange={([value]) => setVoiceSettings(prev => ({ ...prev, volume: value }))}
+                onValueChange={([value]) => setVoiceSettings(prev => ({ ...prev, volume: value || 0.8 }))}
                 min={0}
                 max={1.0}
                 step={0.1}
@@ -349,7 +348,7 @@ export const AudioPlayground: React.FC<AudioPlaygroundProps> = ({
                 <Label>Emphasis: {voiceSettings.emphasis.toFixed(1)}</Label>
                 <Slider
                   value={[voiceSettings.emphasis]}
-                  onValueChange={([value]) => setVoiceSettings(prev => ({ ...prev, emphasis: value }))}
+                  onValueChange={([value]) => setVoiceSettings(prev => ({ ...prev, emphasis: value || 1.0 }))}
                   min={0.5}
                   max={2.0}
                   step={0.1}
@@ -361,7 +360,7 @@ export const AudioPlayground: React.FC<AudioPlaygroundProps> = ({
                 <Label>Pause Duration: {voiceSettings.pauseDuration}ms</Label>
                 <Slider
                   value={[voiceSettings.pauseDuration]}
-                  onValueChange={([value]) => setVoiceSettings(prev => ({ ...prev, pauseDuration: value }))}
+                  onValueChange={([value]) => setVoiceSettings(prev => ({ ...prev, pauseDuration: value || 500 }))}
                   min={100}
                   max={2000}
                   step={100}
@@ -430,7 +429,7 @@ export const AudioPlayground: React.FC<AudioPlaygroundProps> = ({
             <div className="space-y-4">
               <div className="p-4 bg-gray-50 rounded-lg">
                 <h4 className="font-medium mb-3 flex items-center gap-2">
-                  <Waveform className="w-4 h-4" />
+                  <AudioWaveform className="w-4 h-4" />
                   Audio Visualization
                 </h4>
                 <AudioVisualizer isPlaying={isPlaying} audioData={audioData} />

@@ -15,9 +15,8 @@ import {
   Menu,
   X,
   Flame,
-  Zap,
-  Star
-} from 'lucide-react'
+  Star,
+  } from 'lucide-react'
 
 interface MobileNavigationProps {
   currentView: string

@@ -11,8 +11,8 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Agent, AgentExecution, ExecutionStep, ExecutionStatus } from '@/types/agents';
-import { executeAgent, getExecutionStatus } from '@/lib/agent-framework/execution-service';
+import { Agent } from '@/types/agents';
+import { executeAgent, type AgentExecution, type ExecutionStep } from '@/lib/agent-framework/execution-service';
 import {
   Play,
   Pause,
@@ -20,15 +20,9 @@ import {
   RotateCcw,
   Download,
   Share2,
-  Settings,
   Bug,
-  Clock,
-  Zap,
   Brain,
-  MessageSquare,
-  Code,
   BarChart3,
-  History
 } from 'lucide-react';
 
 interface AgentPlaygroundProps {
@@ -37,7 +31,7 @@ interface AgentPlaygroundProps {
   onShare?: (agentId: string) => void;
 }
 
-export function AgentPlayground({ agent, onSave, onShare }: AgentPlaygroundProps) {
+export function AgentPlayground({ agent, onShare }: AgentPlaygroundProps) {
   const [input, setInput] = useState('');
   const [output, setOutput] = useState('');
   const [isRunning, setIsRunning] = useState(false);
@@ -48,7 +42,7 @@ export function AgentPlayground({ agent, onSave, onShare }: AgentPlaygroundProps
   const [showDebugPanel, setShowDebugPanel] = useState(false);
   const [showMetrics, setShowMetrics] = useState(true);
   const [executionMode, setExecutionMode] = useState<'fast' | 'step-by-step' | 'debug'>('fast');
-  const [autoRun, setAutoRun] = useState(false);
+  
   const [history, setHistory] = useState<Array<{ input: string; output: string; timestamp: Date }>>([]);
   const [settings, setSettings] = useState({
     temperature: agent.config.model.temperature,
@@ -58,7 +52,7 @@ export function AgentPlayground({ agent, onSave, onShare }: AgentPlaygroundProps
   });
 
   const outputRef = useRef<HTMLDivElement>(null);
-  const stepIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const stepIntervalRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (outputRef.current) {
@@ -82,13 +76,7 @@ export function AgentPlayground({ agent, onSave, onShare }: AgentPlaygroundProps
 
     try {
       const execution = await executeAgent(agent.id, {
-        input,
-        mode: executionMode,
-        settings: {
-          ...settings,
-          debugMode: executionMode === 'debug',
-          stepByStepMode: executionMode === 'step-by-step',
-        }
+        input
       });
 
       setCurrentExecution(execution);
@@ -142,8 +130,10 @@ export function AgentPlayground({ agent, onSave, onShare }: AgentPlaygroundProps
       }
 
       const currentStep = executionSteps[stepIndex];
+      if (!currentStep) return;
+
       setCurrentStepIndex(stepIndex);
-      setSteps(prev => [...prev, currentStep]);
+      setSteps(prev => [...prev, currentStep!]);
 
       // Accumulate output based on step type
       if (currentStep.type === 'llm_response' && currentStep.output) {

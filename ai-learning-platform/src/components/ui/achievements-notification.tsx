@@ -12,7 +12,6 @@ import {
   Zap,
   Gift,
   Sparkles,
-  CheckCircle,
   X
 } from 'lucide-react'
 
@@ -61,6 +60,7 @@ export function AchievementNotification({
       }, 5000)
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [isVisible])
 
   const getRarityGradient = () => {

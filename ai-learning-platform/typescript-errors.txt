@@ -1,0 +1,104 @@
+src/components/agent-builder/execution-debug-panel.tsx(7,10): error TS6133: 'ExecutionStep' is declared but its value is never read.
+src/components/agent-builder/node-palette.tsx(141,9): error TS6133: '_onAddNode' is declared but its value is never read.
+src/components/agent-deployment/agent-deployment-dashboard.tsx(10,17): error TS6133: 'AgentExecution' is declared but its value is never read.
+src/components/agent-deployment/agent-deployment-dashboard.tsx(10,33): error TS6133: 'ExecutionStatus' is declared but its value is never read.
+src/components/agent-deployment/agent-deployment-dashboard.tsx(11,59): error TS6133: 'getDeploymentMetrics' is declared but its value is never read.
+src/components/agent-deployment/agent-deployment-dashboard.tsx(30,3): error TS6133: 'Users' is declared but its value is never read.
+src/components/agent-learning/agent-learning-dashboard.tsx(9,40): error TS6133: 'learningPaths' is declared but its value is never read.
+src/components/agent-learning/agent-projects-gallery.tsx(9,38): error TS6133: 'projects' is declared but its value is never read.
+src/components/agent-learning/levels/level-five-learning.tsx(9,35): error TS6133: 'learningPath' is declared but its value is never read.
+src/components/agent-learning/levels/level-four-learning.tsx(9,35): error TS6133: 'learningPath' is declared but its value is never read.
+src/components/agent-learning/levels/level-one-learning.tsx(9,34): error TS6133: 'learningPath' is declared but its value is never read.
+src/components/agent-learning/levels/level-three-learning.tsx(9,36): error TS6133: 'learningPath' is declared but its value is never read.
+src/components/agent-learning/levels/level-two-learning.tsx(9,34): error TS6133: 'learningPath' is declared but its value is never read.
+src/components/agent-playground/agent-playground.tsx(14,48): error TS6133: 'ExecutionStatus' is declared but its value is never read.
+src/components/agent-playground/agent-playground.tsx(15,24): error TS6133: 'getExecutionStatus' is declared but its value is never read.
+src/components/agent-playground/agent-playground.tsx(23,3): error TS6133: 'Settings' is declared but its value is never read.
+src/components/agent-playground/agent-playground.tsx(25,3): error TS6133: 'Clock' is declared but its value is never read.
+src/components/agent-playground/agent-playground.tsx(26,3): error TS6133: 'Zap' is declared but its value is never read.
+src/components/agent-playground/agent-playground.tsx(28,3): error TS6133: 'MessageSquare' is declared but its value is never read.
+src/components/agent-playground/agent-playground.tsx(29,3): error TS6133: 'Code' is declared but its value is never read.
+src/components/agent-playground/agent-playground.tsx(31,3): error TS6133: 'History' is declared but its value is never read.
+src/components/agent-playground/agent-playground.tsx(40,42): error TS6133: 'onSave' is declared but its value is never read.
+src/components/agent-playground/agent-playground.tsx(51,10): error TS6133: 'autoRun' is declared but its value is never read.
+src/components/agent-playground/agent-playground.tsx(51,19): error TS6133: 'setAutoRun' is declared but its value is never read.
+src/components/agent-playground/agent-playground.tsx(61,41): error TS2694: Namespace 'NodeJS' has no exported member 'Timeout'.
+src/components/agent-playground/agent-playground.tsx(94,27): error TS2345: Argument of type 'ExecutionStep[]' is not assignable to parameter of type 'SetStateAction<AgentExecution | null>'.
+src/components/agent-playground/agent-playground.tsx(98,29): error TS2339: Property 'output' does not exist on type 'ExecutionStep[]'.
+src/components/agent-playground/agent-playground.tsx(99,28): error TS2339: Property 'steps' does not exist on type 'ExecutionStep[]'.
+src/components/agent-playground/agent-playground.tsx(104,31): error TS2339: Property 'output' does not exist on type 'ExecutionStep[]'.
+src/components/agent-playground/agent-playground.tsx(110,41): error TS2339: Property 'steps' does not exist on type 'ExecutionStep[]'.
+src/components/agent-playground/agent-playground.tsx(146,16): error TS2345: Argument of type '(prev: ExecutionStep[]) => (ExecutionStep | undefined)[]' is not assignable to parameter of type 'SetStateAction<ExecutionStep[]>'.
+  Type '(prev: ExecutionStep[]) => (ExecutionStep | undefined)[]' is not assignable to type '(prevState: ExecutionStep[]) => ExecutionStep[]'.
+    Type '(ExecutionStep | undefined)[]' is not assignable to type 'ExecutionStep[]'.
+      Type 'ExecutionStep | undefined' is not assignable to type 'ExecutionStep'.
+        Type 'undefined' is not assignable to type 'ExecutionStep'.
+src/components/agent-playground/agent-playground.tsx(149,11): error TS18048: 'currentStep' is possibly 'undefined'.
+src/components/agent-playground/agent-playground.tsx(149,50): error TS18048: 'currentStep' is possibly 'undefined'.
+src/components/agent-playground/agent-playground.tsx(150,30): error TS18048: 'currentStep' is possibly 'undefined'.
+src/components/audio-playground/AudioPlayground.tsx(93,3): error TS6133: 'apiKey' is declared but its value is never read.
+src/components/gamification/leaderboard.tsx(15,3): error TS6133: 'Star' is declared but its value is never read.
+src/components/gamification/streak-tracker.tsx(10,3): error TS6133: 'Calendar' is declared but its value is never read.
+src/components/gamification/streak-tracker.tsx(19,30): error TS6133: 'getTimeAgo' is declared but its value is never read.
+src/components/gamification/xp-bar.tsx(31,13): error TS7030: Not all code paths return a value.
+src/components/multimodal-workshop/MultiModalWorkshop.tsx(13,12): error TS6133: 'ImageIcon' is declared but its value is never read.
+src/components/multimodal-workshop/MultiModalWorkshop.tsx(15,3): error TS6133: 'Mic' is declared but its value is never read.
+src/components/multimodal-workshop/MultiModalWorkshop.tsx(20,3): error TS6133: 'Settings' is declared but its value is never read.
+src/components/multimodal-workshop/MultiModalWorkshop.tsx(22,3): error TS6133: 'Globe' is declared but its value is never read.
+src/components/multimodal-workshop/MultiModalWorkshop.tsx(23,3): error TS6133: 'Users' is declared but its value is never read.
+src/components/multimodal-workshop/MultiModalWorkshop.tsx(24,3): error TS6133: 'Palette' is declared but its value is never read.
+src/components/multimodal-workshop/MultiModalWorkshop.tsx(298,61): error TS6133: 'index' is declared but its value is never read.
+src/components/multimodal-workshop/MultiModalWorkshop.tsx(328,25): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'SetStateAction<string>'.
+  Type 'undefined' is not assignable to type 'SetStateAction<string>'.
+src/components/multimodal-workshop/MultiModalWorkshop.tsx(429,49): error TS6133: 'index' is declared but its value is never read.
+src/components/ui/achievements-notification.tsx(15,3): error TS6133: 'CheckCircle' is declared but its value is never read.
+src/components/ui/achievements-notification.tsx(55,13): error TS7030: Not all code paths return a value.
+src/components/ui/mobile-navigation.tsx(18,3): error TS6133: 'Zap' is declared but its value is never read.
+src/components/ui/select.tsx(68,30): error TS6133: 'value' is declared but its value is never read.
+src/components/vision-playground/VisionPlayground.tsx(3,35): error TS6133: 'useCallback' is declared but its value is never read.
+src/components/vision-playground/VisionPlayground.tsx(13,12): error TS6133: 'ImageIcon' is declared but its value is never read.
+src/components/vision-playground/VisionPlayground.tsx(17,3): error TS6133: 'Settings' is declared but its value is never read.
+src/components/vision-playground/VisionPlayground.tsx(19,3): error TS6133: 'FileText' is declared but its value is never read.
+src/components/vision-playground/VisionPlayground.tsx(20,3): error TS6133: 'Palette' is declared but its value is never read.
+src/components/vision-playground/VisionPlayground.tsx(22,3): error TS6133: 'Search' is declared but its value is never read.
+src/components/vision-playground/VisionPlayground.tsx(61,3): error TS6133: 'apiKey' is declared but its value is never read.
+src/components/vision-playground/VisionPlayground.tsx(255,9): error TS6133: 'renderBoundingBox' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(6,11): error TS6133: 'memory' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(23,5): error TS6133: 'options' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(138,11): error TS6133: 'systemPrompt' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(224,38): error TS6133: 'agent' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(295,11): error TS6133: 'prepareToolsForOpenAI' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(306,17): error TS6133: 'executeToolCalls' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(358,11): error TS6133: 'calculateCost' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(411,34): error TS6133: 'input' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(411,49): error TS6133: 'agent' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(419,52): error TS6133: 'agent' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(424,82): error TS6133: 'agent' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(429,55): error TS6133: 'agent' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(437,73): error TS6133: 'agent' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(445,17): error TS6133: 'args' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(468,17): error TS6133: 'args' is declared but its value is never read.
+src/lib/agent-framework/agent-execution-engine.ts(478,17): error TS6133: 'args' is declared but its value is never read.
+src/lib/agent-framework/builder-service.ts(22,18): error TS2339: Property 'data' does not exist on type 'WorkflowEdge'.
+src/lib/agent-framework/deployment-service.ts(79,24): error TS6133: 'agentId' is declared but its value is never read.
+src/lib/agent-framework/execution-service.ts(13,28): error TS6133: 'agentId' is declared but its value is never read.
+src/lib/agent-framework/execution-service.ts(17,39): error TS6133: 'input' is declared but its value is never read.
+src/lib/agent-framework/execution-service.ts(27,29): error TS6133: 'agentId' is declared but its value is never read.
+src/lib/agent-framework/learning-service.ts(2,24): error TS6133: 'LearningModule' is declared but its value is never read.
+src/lib/agent-framework/learning-service.ts(17,32): error TS6133: 'level' is declared but its value is never read.
+src/lib/agent-framework/learning-service.ts(21,27): error TS6133: 'lessonId' is declared but its value is never read.
+src/lib/agent-framework/learning-service.ts(29,22): error TS6133: 'agentId' is declared but its value is never read.
+src/lib/agent-framework/learning-service.ts(33,23): error TS6133: 'agentId' is declared but its value is never read.
+src/lib/agent-framework/project-templates.ts(1,10): error TS6133: 'Agent' is declared but its value is never read.
+src/lib/agent-framework/projects-service.ts(22,26): error TS6133: 'agentId' is declared but its value is never read.
+src/lib/agent-framework/projects-service.ts(27,20): error TS6133: 'id' is declared but its value is never read.
+src/lib/agent-framework/projects-service.ts(42,23): error TS6133: 'id' is declared but its value is never read.
+src/lib/agent-framework/projects-service.ts(42,35): error TS6133: 'updates' is declared but its value is never read.
+src/lib/agent-framework/projects-service.ts(47,23): error TS6133: 'id' is declared but its value is never read.
+src/lib/agent-framework/projects-service.ts(52,24): error TS6133: 'query' is declared but its value is never read.
+src/lib/agent-framework/workflow-service.ts(28,22): error TS6133: 'id' is declared but its value is never read.
+src/lib/agent-framework/workflow-service.ts(32,26): error TS6133: 'nodes' is declared but its value is never read.
+src/lib/agent-framework/workflow-service.ts(32,49): error TS6133: 'edges' is declared but its value is never read.
+src/lib/audio-processing/index.ts(210,11): error TS6133: 'apiKey' is declared but its value is never read.
+src/lib/image-processing/index.ts(152,15): error TS2322: Type 'ImageConfig | undefined' is not assignable to type 'ImageConfig'.
+  Type 'undefined' is not assignable to type 'ImageConfig'.

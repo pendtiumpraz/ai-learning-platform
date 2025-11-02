@@ -6,7 +6,7 @@ interface Props {
   learningPaths: LearningPath[]
 }
 
-export function AgentLearningDashboard({ learningPaths }: Props) {
+export function AgentLearningDashboard({ }: Props) {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Agent Learning Dashboard</h2>

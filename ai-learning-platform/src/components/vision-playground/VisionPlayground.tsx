@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, useCallback } from 'react'
+import React, { useState, useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -10,16 +10,11 @@ import { Progress } from '@/components/ui/progress'
 import {
   Upload,
   Camera,
-  Image as ImageIcon,
-  Download,
+    Download,
   Eye,
   Brain,
-  Settings,
   Trash2,
-  FileText,
-  Palette,
   Grid3X3,
-  Search,
   Zap
 } from 'lucide-react'
 
@@ -58,7 +53,6 @@ export interface VisionPlaygroundProps {
 }
 
 export const VisionPlayground: React.FC<VisionPlaygroundProps> = ({
-  apiKey,
   onAnalysisComplete
 }) => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null)
@@ -252,29 +246,7 @@ export const VisionPlayground: React.FC<VisionPlaygroundProps> = ({
     }
   }
 
-  const renderBoundingBox = (bbox?: [number, number, number, number]) => {
-    if (!bbox) return null
-
-    const [x, y, width, height] = bbox
-    const imageWidth = 400 // Assuming a standard width for the demo
-    const imageHeight = 300
-
-    const scaleX = imageWidth / 100
-    const scaleY = imageHeight / 100
-
-    return (
-      <div
-        className="absolute border-2 border-blue-500 bg-blue-500 bg-opacity-10"
-        style={{
-          left: `${x * scaleX}px`,
-          top: `${y * scaleY}px`,
-          width: `${width * scaleX}px`,
-          height: `${height * scaleY}px`
-        }}
-      />
-    )
-  }
-
+  
   return (
     <div className="space-y-6">
       {/* Image Upload */}

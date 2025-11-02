@@ -12,10 +12,9 @@ import {
   Crown,
   TrendingUp,
   Users,
-  Star,
-  Zap,
+    Zap,
   Globe,
-  Friends,
+  UserPlus,
   Target
 } from 'lucide-react'
 import { formatXP } from '@/lib/utils'
@@ -125,7 +124,7 @@ export function Leaderboard({
       case 'global':
         return <Globe className="h-5 w-5" />
       case 'friends':
-        return <Friends className="h-5 w-5" />
+        return <UserPlus className="h-5 w-5" />
       case 'weekly':
         return <TrendingUp className="h-5 w-5" />
       case 'category':
@@ -240,7 +239,7 @@ export function Leaderboard({
             >
               {tab === 'all' && <Globe className="h-4 w-4 mr-2" />}
               {tab === 'weekly' && <TrendingUp className="h-4 w-4 mr-2" />}
-              {tab === 'friends' && <Friends className="h-4 w-4 mr-2" />}
+              {tab === 'friends' && <UserPlus className="h-4 w-4 mr-2" />}
               {tab}
             </Button>
           ))}

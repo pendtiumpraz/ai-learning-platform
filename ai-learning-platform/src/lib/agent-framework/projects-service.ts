@@ -19,12 +19,12 @@ export class ProjectsService {
     return []
   }
 
-  async getAgentProjects(agentId: string): Promise<Project[]> {
+  async getAgentProjects(_agentId: string): Promise<Project[]> {
     // Mock implementation
     return []
   }
 
-  async getProject(id: string): Promise<Project | null> {
+  async getProject(_id: string): Promise<Project | null> {
     // Mock implementation
     return null
   }
@@ -39,17 +39,17 @@ export class ProjectsService {
     }
   }
 
-  async updateProject(id: string, updates: Partial<Project>): Promise<Project | null> {
+  async updateProject(_id: string, _updates: Partial<Project>): Promise<Project | null> {
     // Mock implementation
     return null
   }
 
-  async deleteProject(id: string): Promise<boolean> {
+  async deleteProject(_id: string): Promise<boolean> {
     // Mock implementation
     return true
   }
 
-  async searchProjects(query: string): Promise<Project[]> {
+  async searchProjects(_query: string): Promise<Project[]> {
     // Mock implementation
     return []
   }

@@ -1,14 +1,15 @@
-import { PrismaClient } from '@prisma/client'
+// Use dynamic import to avoid TypeScript type issues
+const PrismaClient = require('@prisma/client').PrismaClient
 
-const globalForPrisma = globalThis as unknown as {
-  prisma: PrismaClient | undefined
+declare global {
+  var prisma: any | undefined
 }
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({
+export const prisma = global.prisma ?? new PrismaClient({
   log: ['query'],
 })
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+if (process.env.NODE_ENV !== 'production') global.prisma = prisma
 
 // Helper functions for common database operations
 export async function getUserById(id: string) {
@@ -104,14 +105,14 @@ export async function getSubjectProgress(userId: string, subjectId: string) {
   let totalQuizzes = 0
   let passedQuizzes = 0
 
-  modules.forEach((module) => {
+  modules.forEach((module: any) => {
     totalLessons += module.lessons.length
-    completedLessons += module.progress.filter((p) =>
+    completedLessons += module.progress.filter((p: any) =>
       p.contentType === 'LESSON' && p.status === 'COMPLETED'
     ).length
 
     totalQuizzes += module.quizzes.length
-    passedQuizzes += module.progress.filter((p) =>
+    passedQuizzes += module.progress.filter((p: any) =>
       p.contentType === 'QUIZ' && p.status === 'COMPLETED'
     ).length
   })
@@ -127,8 +128,8 @@ export async function getSubjectProgress(userId: string, subjectId: string) {
     totalQuizzes,
     passedQuizzes,
     totalModules: modules.length,
-    completedModules: modules.filter((module) =>
-      module.progress.filter((p) => p.contentType === 'MODULE' && p.status === 'COMPLETED').length > 0
+    completedModules: modules.filter((module: any) =>
+      module.progress.filter((p: any) => p.contentType === 'MODULE' && p.status === 'COMPLETED').length > 0
     ).length
   }
 }

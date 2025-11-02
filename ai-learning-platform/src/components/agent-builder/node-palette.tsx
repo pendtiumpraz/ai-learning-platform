@@ -133,11 +133,12 @@ const nodeCategories = [
   }
 ];
 
-export function NodePalette({ onAddNode }: NodePaletteProps) {
+export function NodePalette({ }: NodePaletteProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(new Set(['Core Components', 'Tools & Integration']));
   const [draggedNodeType, setDraggedNodeType] = useState<NodeType | null>(null);
 
+  
   const handleDragStart = (e: React.DragEvent, nodeType: NodeType) => {
     setDraggedNodeType(nodeType);
     e.dataTransfer.effectAllowed = 'copy';

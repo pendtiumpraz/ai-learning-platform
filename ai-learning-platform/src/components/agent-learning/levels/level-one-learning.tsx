@@ -6,7 +6,7 @@ interface Props {
   learningPath: LearningPath | null
 }
 
-export function LevelOneLearning({ learningPath }: Props) {
+export function LevelOneLearning({ }: Props) {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Level 1: Introduction to AI Agents</h2>

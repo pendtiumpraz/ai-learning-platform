@@ -36,4 +36,11 @@ export class OrchestrationService {
   }
 }
 
-export const orchestrationService = new OrchestrationService()
+const orchestrationService = new OrchestrationService()
+
+export const orchestrateAgents = () => orchestrationService.orchestrateAgents()
+export const getOrchestrationStatus = () => orchestrationService.getOrchestrationStatus()
+export const startOrchestration = (agentId: string) => orchestrationService.startOrchestration(agentId)
+export const stopOrchestration = (agentId: string) => orchestrationService.stopOrchestration(agentId)
+export const getStatus = (agentId: string) => orchestrationService.getStatus(agentId)
+

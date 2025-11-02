@@ -37,6 +37,7 @@ export function XPBar({
     } else {
       setDisplayXP(currentXP)
     }
+    return undefined
   }, [currentXP, animated])
 
   useEffect(() => {

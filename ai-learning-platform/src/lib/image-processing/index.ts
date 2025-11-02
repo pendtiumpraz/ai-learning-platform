@@ -149,8 +149,15 @@ export const MAX_FILE_SIZES = {
 export class ImageProcessor {
   private config: ImageConfig
 
-  constructor(imageConfig: ImageConfig = IMAGE_CONFIGS.analysis) {
-    this.config = imageConfig ?? IMAGE_CONFIGS.analysis
+  constructor(imageConfig?: ImageConfig) {
+    this.config = imageConfig || IMAGE_CONFIGS.analysis || {
+      maxWidth: 1024,
+      maxHeight: 1024,
+      quality: 0.95,
+      format: 'jpeg' as const,
+      enableCompression: false
+    }
+    console.log('ImageProcessor initialized with config:', this.config)
   }
 
   /**

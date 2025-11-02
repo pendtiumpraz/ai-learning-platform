@@ -1,5 +1,5 @@
 // Agent Learning Service - Implementation placeholder
-import { LearningPath, LearningModule } from '../../types/agents'
+import { LearningPath } from '../../types/agents'
 
 export interface LessonProgress {
   lessonId: string
@@ -14,23 +14,23 @@ class LearningService {
     return []
   }
 
-  async getLearningPathByLevel(level: number): Promise<LearningPath | null> {
+  async getLearningPathByLevel(_level: number): Promise<LearningPath | null> {
     return null
   }
 
-  async getLessonProgress(lessonId: string): Promise<LessonProgress | null> {
+  async getLessonProgress(_lessonId: string): Promise<LessonProgress | null> {
     return null
   }
 
-  async updateProgress(lessonId: string, progress: Partial<LessonProgress>): Promise<void> {
-    console.log('Progress updated:', lessonId, progress)
+  async updateProgress(_lessonId: string, progress: Partial<LessonProgress>): Promise<void> {
+    console.log('Progress updated:', progress)
   }
 
-  async getUserLevel(agentId: string): Promise<number> {
+  async getUserLevel(_agentId: string): Promise<number> {
     return 1
   }
 
-  async getNextLesson(agentId: string): Promise<string | null> {
+  async getNextLesson(_agentId: string): Promise<string | null> {
     return null
   }
 }

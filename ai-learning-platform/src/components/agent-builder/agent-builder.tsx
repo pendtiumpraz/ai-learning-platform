@@ -26,8 +26,8 @@ const useEdgesState = (initialEdges: any[]) => {
 
 // Mock components
 const Controls = () => <div className="react-flow-controls">Controls</div>;
-const MiniMap = ({ nodeColor }: any) => <div className="react-flow-minimap">Minimap</div>;
-const Background = ({ variant, gap, size }: any) => <div className="react-flow-background">Background</div>;
+const MiniMap = (_nodeColor: any) => <div className="react-flow-minimap">Minimap</div>;
+const Background = (_props: any) => <div className="react-flow-background">Background</div>;
 const BackgroundVariant = {
   Dots: 'dots'
 };
@@ -99,7 +99,7 @@ export function AgentBuilder({
   const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [selectedEdge, setSelectedEdge] = useState<Edge | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
-  const [executionSteps, setExecutionSteps] = useState([]);
+  const [executionSteps, setExecutionSteps] = useState<any[]>([]);
   const [showDebugPanel, setShowDebugPanel] = useState(false);
   const [showPropertyPanel, setShowPropertyPanel] = useState(true);
   const [history, setHistory] = useState<{ nodes: Node[], edges: Edge[] }[]>([]);
@@ -383,7 +383,7 @@ export function AgentBuilder({
             <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
             <Controls />
             <MiniMap
-              nodeColor={(node) => {
+              nodeColor={(node: any) => {
                 switch (node.type) {
                   case 'agent': return '#3b82f6';
                   case 'trigger': return '#10b981';

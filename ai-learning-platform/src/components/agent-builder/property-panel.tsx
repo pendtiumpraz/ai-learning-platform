@@ -17,7 +17,6 @@ interface Edge {
   targetHandle?: string;
   data?: any;
 }
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -26,8 +25,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { Agent, NodeType, ModelConfig, ToolType } from '@/types/agents';
-import { Settings, Code, Database, Zap, Trash2, Save } from 'lucide-react';
+import { Agent, NodeType } from '@/types/agents';
+import { Settings, Save } from 'lucide-react';
 
 interface PropertyPanelProps {
   selectedNode?: Node | null;
@@ -78,7 +77,7 @@ export function PropertyPanel({ selectedNode, selectedEdge, onUpdateNode, agent,
   }
 
   if (selectedEdge) {
-    return <EdgePropertyPanel edge={selectedEdge} readOnly={readOnly} />;
+    return <EdgePropertyPanel edge={selectedEdge} readOnly={readOnly ?? false} />;
   }
 
   return (
@@ -131,7 +130,7 @@ export function PropertyPanel({ selectedNode, selectedEdge, onUpdateNode, agent,
               <NodeGeneralProperties
                 nodeData={nodeData}
                 onChange={handleFieldChange}
-                readOnly={readOnly}
+                readOnly={readOnly ?? false}
               />
             </TabsContent>
 
@@ -140,8 +139,8 @@ export function PropertyPanel({ selectedNode, selectedEdge, onUpdateNode, agent,
                 nodeType={selectedNode?.type as NodeType}
                 nodeData={nodeData}
                 onChange={handleFieldChange}
-                agent={agent}
-                readOnly={readOnly}
+                {...(agent && { agent })}
+                readOnly={readOnly ?? false}
               />
             </TabsContent>
 
@@ -149,7 +148,7 @@ export function PropertyPanel({ selectedNode, selectedEdge, onUpdateNode, agent,
               <NodeAdvancedProperties
                 nodeData={nodeData}
                 onChange={handleFieldChange}
-                readOnly={readOnly}
+                readOnly={readOnly ?? false}
               />
             </TabsContent>
           </div>
@@ -204,7 +203,7 @@ function NodeGeneralProperties({ nodeData, onChange, readOnly }: {
         <Checkbox
           id="enabled"
           checked={nodeData.enabled !== false}
-          onCheckedChange={(checked) => onChange('enabled', checked)}
+          onChange={(e) => onChange('enabled', e.target.checked)}
           disabled={readOnly}
         />
         <Label htmlFor="enabled">Enable this node</Label>
@@ -222,19 +221,19 @@ function NodeConfigurationProperties({ nodeType, nodeData, onChange, agent, read
 }) {
   switch (nodeType) {
     case NodeType.AGENT:
-      return <AgentConfiguration nodeData={nodeData} onChange={onChange} agent={agent} readOnly={readOnly} />;
+      return <AgentConfiguration nodeData={nodeData} onChange={onChange} {...(agent && { agent })} readOnly={readOnly ?? false} />;
     case NodeType.TRIGGER:
-      return <TriggerConfiguration nodeData={nodeData} onChange={onChange} readOnly={readOnly} />;
+      return <TriggerConfiguration nodeData={nodeData} onChange={onChange} readOnly={readOnly ?? false} />;
     case NodeType.CONDITION:
-      return <ConditionConfiguration nodeData={nodeData} onChange={onChange} readOnly={readOnly} />;
+      return <ConditionConfiguration nodeData={nodeData} onChange={onChange} readOnly={readOnly ?? false} />;
     case NodeType.ACTION:
-      return <ActionConfiguration nodeData={nodeData} onChange={onChange} readOnly={readOnly} />;
+      return <ActionConfiguration nodeData={nodeData} onChange={onChange} readOnly={readOnly ?? false} />;
     case NodeType.TOOL:
-      return <ToolConfiguration nodeData={nodeData} onChange={onChange} readOnly={readOnly} />;
+      return <ToolConfiguration nodeData={nodeData} onChange={onChange} readOnly={readOnly ?? false} />;
     case NodeType.DELAY:
-      return <DelayConfiguration nodeData={nodeData} onChange={onChange} readOnly={readOnly} />;
+      return <DelayConfiguration nodeData={nodeData} onChange={onChange} readOnly={readOnly ?? false} />;
     case NodeType.LOOP:
-      return <LoopConfiguration nodeData={nodeData} onChange={onChange} readOnly={readOnly} />;
+      return <LoopConfiguration nodeData={nodeData} onChange={onChange} readOnly={readOnly ?? false} />;
     default:
       return <div className="text-sm text-gray-500">No configuration options available for this node type.</div>;
   }
@@ -403,7 +402,7 @@ function ConditionConfiguration({ nodeData, onChange, readOnly }: {
         <Checkbox
           id="invertCondition"
           checked={nodeData.invertCondition || false}
-          onCheckedChange={(checked) => onChange('invertCondition', checked)}
+          onChange={(e) => onChange('invertCondition', e.target.checked)}
           disabled={readOnly}
         />
         <Label htmlFor="invertCondition">Invert condition</Label>
@@ -472,13 +471,13 @@ function ToolConfiguration({ nodeData, onChange, readOnly }: {
             <SelectValue placeholder="Select tool type" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={ToolType.API_CALL}>API Call</SelectItem>
-            <SelectItem value={ToolType.WEB_SEARCH}>Web Search</SelectItem>
-            <SelectItem value={ToolType.DATABASE}>Database</SelectItem>
-            <SelectItem value={ToolType.FILE_OPERATION}>File Operation</SelectItem>
-            <SelectItem value={ToolType.CODE_EXECUTION}>Code Execution</SelectItem>
-            <SelectItem value={ToolType.EMAIL}>Email</SelectItem>
-            <SelectItem value={ToolType.CALENDAR}>Calendar</SelectItem>
+            <SelectItem value="api_call">API Call</SelectItem>
+            <SelectItem value="web_search">Web Search</SelectItem>
+            <SelectItem value="database">Database</SelectItem>
+            <SelectItem value="file_operation">File Operation</SelectItem>
+            <SelectItem value="code_execution">Code Execution</SelectItem>
+            <SelectItem value="email">Email</SelectItem>
+            <SelectItem value="calendar">Calendar</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -689,7 +688,7 @@ function EdgePropertyPanel({ edge, readOnly }: {
         <Input
           id="edgeLabel"
           value={edge.data?.label || ''}
-          onChange={(e) => {
+          onChange={() => {
             // Update edge label logic here
           }}
           placeholder="Enter edge label"
@@ -702,7 +701,7 @@ function EdgePropertyPanel({ edge, readOnly }: {
         <Textarea
           id="edgeCondition"
           value={edge.data?.condition || ''}
-          onChange={(e) => {
+          onChange={() => {
             // Update edge condition logic here
           }}
           placeholder="Enter condition for this connection"

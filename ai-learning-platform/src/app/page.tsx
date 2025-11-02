@@ -1,3 +1,7 @@
+'use client'
+
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -15,6 +19,26 @@ import {
 } from 'lucide-react'
 
 export default function HomePage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    // Check if user is logged in and redirect accordingly
+    const checkAuthStatus = async () => {
+      try {
+        const response = await fetch('/api/auth/me')
+        if (response.ok) {
+          // User is logged in, redirect to dashboard
+          router.push('/dashboard')
+        }
+        // If not logged in, stay on landing page
+      } catch (error) {
+        // User is not logged in, stay on landing page
+        console.log('User not authenticated')
+      }
+    }
+
+    checkAuthStatus()
+  }, [router])
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-purple-900/20">
       {/* Hero Section */}
@@ -36,14 +60,14 @@ export default function HomePage() {
               gamified challenges, and personalized content that grows with you.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-6">
+              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-6" onClick={() => router.push('/auth')}>
                 <BookOpen className="w-5 h-5 mr-2" />
-                Start Learning
+                Get Started Free
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6">
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6" onClick={() => router.push('/auth')}>
                 <Gamepad2 className="w-5 h-5 mr-2" />
-                Try Demo Games
+                Sign Up Now
               </Button>
             </div>
           </div>
@@ -189,12 +213,12 @@ export default function HomePage() {
               No credit card required, start your free trial today!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-6">
+              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg px-8 py-6" onClick={() => router.push('/auth')}>
                 <Zap className="w-5 h-5 mr-2" />
-                Start Free Trial
+                Start Your Journey
               </Button>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-6">
-                View Demo
+              <Button size="lg" variant="outline" className="text-lg px-8 py-6" onClick={() => router.push('/auth')}>
+                Create Free Account
               </Button>
             </div>
           </Card>

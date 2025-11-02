@@ -7,8 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
   Flame,
-  Calendar,
-  Zap,
+    Zap,
   Gift,
   Trophy,
   Star,
@@ -16,7 +15,7 @@ import {
   Target,
   CheckCircle
 } from 'lucide-react'
-import { getStreakBonusDays, getTimeAgo } from '@/lib/utils'
+import { getStreakBonusDays } from '@/lib/utils'
 
 interface StreakTrackerProps {
   currentStreak: number

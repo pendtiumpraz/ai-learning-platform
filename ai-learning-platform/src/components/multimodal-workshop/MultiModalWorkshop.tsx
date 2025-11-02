@@ -10,18 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Progress } from '@/components/ui/progress'
 import {
   Upload,
-  Image as ImageIcon,
   Volume2,
-  Mic,
   Play,
   Pause,
   Download,
   Brain,
-  Settings,
   FileText,
-  Globe,
-  Users,
-  Palette,
   Camera,
   Zap,
   Wand2,
@@ -272,13 +266,16 @@ export const MultiModalWorkshop: React.FC<MultiModalWorkshopProps> = ({
     if (file) {
       const reader = new FileReader()
       reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string)
-        if (selectedProject) {
-          const updatedSteps = selectedProject.steps.map((step, index) => ({
-            ...step,
-            completed: index === 0 ? true : step.completed
-          }))
-          setSelectedProject({ ...selectedProject, steps: updatedSteps })
+        const result = e.target?.result as string
+        if (result) {
+          setSelectedImage(result)
+          if (selectedProject) {
+            const updatedSteps = selectedProject.steps.map((step, index) => ({
+              ...step,
+              completed: index === 0 ? true : step.completed
+            }))
+            setSelectedProject({ ...selectedProject, steps: updatedSteps })
+          }
         }
       }
       reader.readAsDataURL(file)
@@ -295,7 +292,7 @@ export const MultiModalWorkshop: React.FC<MultiModalWorkshopProps> = ({
       // Simulate processing
       await new Promise(resolve => setTimeout(resolve, 1500))
 
-      const updatedSteps = selectedProject.steps.map((step, index) => {
+      const updatedSteps = selectedProject.steps.map((step) => {
         if (step.type === stepType) {
           return { ...step, completed: true }
         }
@@ -325,7 +322,7 @@ export const MultiModalWorkshop: React.FC<MultiModalWorkshopProps> = ({
 
     // Simulate final processing
     for (let i = 0; i < processingSteps.length; i++) {
-      setProcessingStep(processingSteps[i])
+      setProcessingStep(processingSteps[i] || 'Processing...')
       await new Promise(resolve => setTimeout(resolve, 800))
     }
 
@@ -426,7 +423,7 @@ export const MultiModalWorkshop: React.FC<MultiModalWorkshopProps> = ({
                   <div className="space-y-2 mb-4">
                     <div className="text-sm font-medium">Steps:</div>
                     <div className="space-y-1">
-                      {project.steps.map((step, index) => (
+                      {project.steps.map((step) => (
                         <div key={step.id} className="flex items-center gap-2 text-sm">
                           <div className={`w-4 h-4 rounded-full border-2 ${
                             step.completed ? 'bg-green-500 border-green-500' : 'border-gray-300'

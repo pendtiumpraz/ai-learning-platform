@@ -1,4 +1,4 @@
-import { Agent, AgentTemplate, Workflow, TemplateCategory, AgentType, AgentLevel } from '../../types/agents';
+import { AgentTemplate, Workflow, TemplateCategory, AgentType, AgentLevel } from '../../types/agents';
 
 export const agentTemplates: AgentTemplate[] = [
   // Customer Service Templates

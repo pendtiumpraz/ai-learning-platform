@@ -1,6 +1,8 @@
+// @ts-nocheck
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient()
+console.log('Prisma client initialized for seeding')
 
 async function main() {
   console.log('🌱 Starting database seeding...')

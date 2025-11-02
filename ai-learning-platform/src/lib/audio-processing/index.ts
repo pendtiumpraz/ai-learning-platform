@@ -207,11 +207,10 @@ export const VOICE_CATALOGUE: Record<string, Voice[]> = {
  */
 export class AudioProcessor {
   private config: AudioConfig
-  private apiKey: string
 
-  constructor(apiKey: string, config: AudioConfig = AUDIO_CONFIGS.web) {
-    this.config = config
-    this.apiKey = apiKey
+  constructor(_apiKey: string, config?: AudioConfig) {
+    this.config = config || (AUDIO_CONFIGS.web as AudioConfig)
+    console.log('AudioProcessor initialized with config:', this.config)
   }
 
   /**

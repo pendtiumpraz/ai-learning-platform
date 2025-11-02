@@ -6,7 +6,7 @@ interface Props {
   learningPath: LearningPath | null
 }
 
-export function LevelFiveLearning({ learningPath }: Props) {
+export function LevelFiveLearning({ }: Props) {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Level 5: Production Deployment</h2>

@@ -65,7 +65,7 @@ interface SelectItemProps {
   className?: string
 }
 
-export function SelectItem({ value, children, className }: SelectItemProps) {
+export function SelectItem({ children, className }: SelectItemProps) {
   return (
     <div className={`relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground ${className}`}>
       {children}

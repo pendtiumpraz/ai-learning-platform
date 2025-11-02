@@ -6,7 +6,7 @@ interface Props {
   learningPath: LearningPath | null
 }
 
-export function LevelThreeLearning({ learningPath }: Props) {
+export function LevelThreeLearning({ }: Props) {
   return (
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-4">Level 3: Advanced Agent Features</h2>

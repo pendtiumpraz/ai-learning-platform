@@ -7,8 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Agent, AgentExecution, ExecutionStatus } from '@/types/agents';
-import { deployAgent, getAgentDeployments, undeployAgent, getDeploymentMetrics } from '@/lib/agent-framework/deployment-service';
+import { Agent } from '@/types/agents';
+import { deployAgent, getAgentDeployments, undeployAgent } from '@/lib/agent-framework/deployment-service';
 import {
   Rocket,
   Server,
@@ -27,8 +27,7 @@ import {
   Shield,
   Zap,
   TrendingUp,
-  Users,
-  Database,
+    Database,
   Cpu
 } from 'lucide-react';
 

@@ -1,4 +1,4 @@
-import { Workflow, AgentExecution, SaveWorkflowFunction, ExecuteWorkflowFunction } from '../types/agents';
+import { Workflow, AgentExecution, SaveWorkflowFunction, ExecuteWorkflowFunction, AgentType, AgentLevel, AgentStatus, Agent } from '../../types/agents';
 import { workflowService } from './workflow-service';
 import { agentExecutionEngine } from './agent-execution-engine';
 
@@ -13,14 +13,18 @@ export const saveWorkflow: SaveWorkflowFunction = async (workflow: Workflow) => 
       data: node.data,
     }));
 
-    const workflowEdges = workflow.edges.map(edge => ({
-      id: edge.id,
-      source: edge.source,
-      target: edge.target,
-      sourceHandle: edge.sourceHandle,
-      targetHandle: edge.targetHandle,
-      data: edge.data || {},
-    }));
+    const workflowEdges = workflow.edges.map(edge => {
+      const result: any = {
+        id: edge.id,
+        source: edge.source,
+        target: edge.target,
+      }
+      
+      if (edge.sourceHandle) result.sourceHandle = edge.sourceHandle
+      if (edge.targetHandle) result.targetHandle = edge.targetHandle
+      
+      return result
+    });
 
     await workflowService.saveWorkflow(workflowNodes, workflowEdges);
     console.log('Workflow saved successfully:', workflow.id);
@@ -94,5 +98,3 @@ export const executeWorkflow: ExecuteWorkflowFunction = async (workflowId: strin
   }
 };
 
-// Import required enums and types
-import { AgentType, AgentLevel, AgentStatus, Agent } from '../types/agents';
