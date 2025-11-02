@@ -84,8 +84,7 @@ async function main() {
         type: 'COMPLETION',
         category: 'Getting Started',
         icon: 'star',
-        rarity: 'common',
-        xpReward: 50,
+        points: 50,
       },
       {
         title: 'Week Warrior',
@@ -93,8 +92,7 @@ async function main() {
         type: 'STREAK',
         category: 'Streaks',
         icon: 'calendar',
-        rarity: 'rare',
-        xpReward: 200,
+        points: 200,
       },
       {
         title: 'Game Master',
@@ -102,8 +100,7 @@ async function main() {
         type: 'GAME',
         category: 'Games',
         icon: 'gamepad',
-        rarity: 'common',
-        xpReward: 25,
+        points: 25,
       },
     ]
 
@@ -125,18 +122,10 @@ async function main() {
         id: 'test-path-1',
         title: 'AI Fundamentals',
         description: 'Learn the basics of Artificial Intelligence',
-        difficulty: 'beginner',
+        difficulty: 'BEGINNER',
         estimatedTime: 120,
         isPublic: true,
         isRecommended: true,
-        xpReward: 500,
-        subject: {
-          create: {
-            name: 'Artificial Intelligence',
-            category: 'Technology',
-            description: 'Learn about AI and machine learning',
-          },
-        },
       },
     })
 

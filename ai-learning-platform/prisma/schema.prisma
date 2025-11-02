@@ -113,7 +113,7 @@ model GameStats {
 
 model Achievement {
   id            String           @id @default(cuid())
-  title         String
+  title         String           @unique
   description   String
   icon          String
   badgeColor    String           @default("#6366f1")
