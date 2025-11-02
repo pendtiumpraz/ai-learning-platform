@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -52,7 +53,16 @@ import {
   Settings,
   Bell,
   Flame,
-  Award
+  Award,
+  Code,
+  Volume2,
+  Image,
+  Eye,
+  Cpu,
+  Zap,
+  ArrowRight,
+  Play,
+  Rocket
 } from 'lucide-react'
 
 interface DashboardData {
@@ -175,30 +185,30 @@ export default function Dashboard() {
       ],
       learningPaths: [
         {
-          id: '1',
-          title: 'Introduction to Machine Learning',
-          description: 'Learn the fundamentals of ML and AI',
-          level: 1, // AgentLevel BEGINNER
-          modules: [], // Would contain actual module objects
-          estimatedDuration: 20,
+          id: 'llm-integration',
+          title: 'LLM Integration Masterclass',
+          description: 'Master Large Language Model integration for web applications',
+          level: 1,
+          modules: [],
+          estimatedDuration: 45,
           difficulty: 'beginner',
-          tags: ['machine-learning', 'ai', 'fundamentals'],
+          tags: ['OpenAI', 'ChatGPT', 'API Integration', 'JavaScript'],
           isActive: true,
-          estimatedTimeRemaining: 7,
+          estimatedTimeRemaining: 20,
           isEnrolled: true,
           enrollmentDate: new Date('2024-01-01'),
           lastAccessDate: new Date('2024-01-15'),
-          category: 'Machine Learning',
-          progress: 65,
-          totalModules: 12,
-          completedModules: 8,
-          estimatedHours: 20,
-          xpReward: 1000,
+          category: 'LLM Integration',
+          progress: 70,
+          totalModules: 8,
+          completedModules: 6,
+          estimatedHours: 8,
+          xpReward: 1200,
           currentModule: {
-            id: '9',
-            title: 'Neural Networks Basics',
-            type: 'video',
-            duration: 45
+            id: '7',
+            title: 'Output Parsing & Formatting',
+            type: 'exercise',
+            duration: 30
           },
           prerequisites: [],
           isLocked: false,
@@ -206,58 +216,135 @@ export default function Dashboard() {
           color: 'blue'
         },
         {
-          id: '2',
-          title: 'Advanced Neural Networks',
-          description: 'Deep dive into deep learning architectures',
-          level: 3, // AgentLevel ADVANCED
-          modules: [], // Would contain actual module objects
-          estimatedDuration: 40,
-          difficulty: 'advanced',
-          tags: ['deep-learning', 'neural-networks', 'CNN'],
+          id: 'tts-implementation',
+          title: 'Text-to-Speech Implementation',
+          description: 'Build voice-enabled applications with modern TTS APIs',
+          level: 1,
+          modules: [],
+          estimatedDuration: 30,
+          difficulty: 'beginner',
+          tags: ['ElevenLabs', 'Web Speech API', 'Audio Processing'],
           isActive: true,
-          estimatedTimeRemaining: 30,
+          estimatedTimeRemaining: 15,
           isEnrolled: true,
           enrollmentDate: new Date('2024-01-05'),
-          lastAccessDate: new Date('2024-01-10'),
-          category: 'Deep Learning',
-          progress: 25,
-          totalModules: 16,
-          completedModules: 4,
-          estimatedHours: 40,
-          xpReward: 2000,
+          lastAccessDate: new Date('2024-01-14'),
+          category: 'TTS Integration',
+          progress: 50,
+          totalModules: 6,
+          completedModules: 3,
+          estimatedHours: 5,
+          xpReward: 800,
           currentModule: {
-            id: '5',
-            title: 'CNN Architecture',
-            type: 'exercise',
-            duration: 60
+            id: '4',
+            title: 'Audio Controls & Playback',
+            type: 'video',
+            duration: 25
           },
-          prerequisites: ['Introduction to Machine Learning'],
+          prerequisites: [],
           isLocked: false,
-          icon: 'code',
+          icon: 'volume2',
           color: 'purple'
         },
         {
-          id: '3',
-          title: 'Natural Language Processing',
-          description: 'Master NLP techniques and applications',
-          level: 2, // AgentLevel INTERMEDIATE
-          modules: [], // Would contain actual module objects
-          estimatedDuration: 35,
+          id: 'vlm-vision',
+          title: 'Vision Language Models',
+          description: 'Implement image analysis with AI vision capabilities',
+          level: 2,
+          modules: [],
+          estimatedDuration: 50,
           difficulty: 'intermediate',
-          tags: ['nlp', 'text-processing', 'transformers'],
+          tags: ['GPT-4 Vision', 'Image Analysis', 'Base64 Encoding'],
           isActive: true,
           estimatedTimeRemaining: 35,
           isEnrolled: false,
-          category: 'NLP',
+          category: 'VLM Integration',
           progress: 0,
-          totalModules: 14,
+          totalModules: 10,
           completedModules: 0,
-          estimatedHours: 35,
+          estimatedHours: 10,
           xpReward: 1500,
-          prerequisites: ['Introduction to Machine Learning'],
+          prerequisites: ['LLM Integration Masterclass'],
           isLocked: false,
-          icon: 'book',
+          icon: 'eye',
           color: 'green'
+        },
+        {
+          id: 'text2image-generation',
+          title: 'AI Image Generation',
+          description: 'Create stunning images with DALL-E and Stable Diffusion',
+          level: 2,
+          modules: [],
+          estimatedDuration: 40,
+          difficulty: 'intermediate',
+          tags: ['DALL-E', 'Stable Diffusion', 'Base64', 'Image Processing'],
+          isActive: true,
+          estimatedTimeRemaining: 40,
+          isEnrolled: false,
+          category: 'AI Image Generation',
+          progress: 0,
+          totalModules: 8,
+          completedModules: 0,
+          estimatedHours: 8,
+          xpReward: 1300,
+          prerequisites: ['LLM Integration Masterclass'],
+          isLocked: false,
+          icon: 'image',
+          color: 'pink'
+        },
+        {
+          id: 'ai-agent-development',
+          title: 'AI Agent Development',
+          description: 'Build autonomous AI agents for automation and complex tasks',
+          level: 3,
+          modules: [],
+          estimatedDuration: 90,
+          difficulty: 'advanced',
+          tags: ['LangChain', 'Autonomous Agents', 'Function Calling'],
+          isActive: true,
+          estimatedTimeRemaining: 90,
+          isEnrolled: false,
+          category: 'AI Agents',
+          progress: 0,
+          totalModules: 15,
+          completedModules: 0,
+          estimatedHours: 20,
+          xpReward: 3000,
+          prerequisites: ['LLM Integration Masterclass', 'Vision Language Models'],
+          isLocked: false,
+          icon: 'cpu',
+          color: 'orange'
+        },
+        {
+          id: 'api-best-practices',
+          title: 'AI API Best Practices',
+          description: 'Production-ready AI integration with security and optimization',
+          level: 2,
+          modules: [],
+          estimatedDuration: 35,
+          difficulty: 'intermediate',
+          tags: ['Security', 'Rate Limiting', 'Cost Optimization', 'Production'],
+          isActive: true,
+          estimatedTimeRemaining: 25,
+          isEnrolled: true,
+          enrollmentDate: new Date('2024-01-08'),
+          lastAccessDate: new Date('2024-01-12'),
+          category: 'API Integration',
+          progress: 30,
+          totalModules: 7,
+          completedModules: 2,
+          estimatedHours: 6,
+          xpReward: 1000,
+          currentModule: {
+            id: '3',
+            title: 'Security & Authentication',
+            type: 'reading',
+            duration: 20
+          },
+          prerequisites: ['LLM Integration Masterclass'],
+          isLocked: false,
+          icon: 'code',
+          color: 'gray'
         }
       ],
       leaderboard: [
@@ -304,11 +391,11 @@ export default function Dashboard() {
       ],
       weeklyChallenge: {
         id: '1',
-        title: 'Python Master',
-        description: 'Complete 5 Python coding challenges',
-        progress: 3,
-        totalRequired: 5,
-        xpReward: 300,
+        title: 'AI Integration Challenge',
+        description: 'Complete 3 AI integration tutorials',
+        progress: 2,
+        totalRequired: 3,
+        xpReward: 500,
         endTime: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000)
       }
     }
@@ -324,11 +411,17 @@ export default function Dashboard() {
   }
 
   const handlePathSelect = (pathId: string) => {
-    console.log('Path selected:', pathId)
+    // Navigate to AI integration tutorial
+    if (typeof window !== 'undefined') {
+      window.location.href = `/learn/ai-integration?tutorial=${pathId}`
+    }
   }
 
   const handleContinueLearning = (pathId: string, moduleId: string) => {
-    console.log('Continue learning:', pathId, moduleId)
+    // Navigate to specific tutorial
+    if (typeof window !== 'undefined') {
+      window.location.href = `/learn/ai-integration?tutorial=${pathId}`
+    }
   }
 
   const handleUserClick = (user: any) => {
@@ -538,9 +631,12 @@ export default function Dashboard() {
                           </span>
                         </div>
 
-                        <Button variant="default" className="w-full">
-                          Continue Challenge
-                        </Button>
+                        <Link href="/learn/ai-integration">
+                          <Button variant="default" className="w-full">
+                            Start AI Tutorials
+                            <ArrowRight className="w-4 h-4 ml-2" />
+                          </Button>
+                        </Link>
                       </div>
                     </CardContent>
                   </Card>
@@ -585,17 +681,91 @@ export default function Dashboard() {
                           </div>
                         ))}
                       </div>
-                      <Button variant="outline" className="w-full mt-4">
-                        View All Achievements
-                      </Button>
+                      <Link href="/learn/ai-integration">
+                        <Button variant="outline" className="w-full mt-4">
+                          View AI Tutorials
+                          <ArrowRight className="w-4 h-4 ml-2" />
+                        </Button>
+                      </Link>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* AI Integration Quick Start */}
+                <div className="lg:col-span-3">
+                  <Card className="bg-gradient-to-r from-blue-600 to-purple-600 text-white border-0 shadow-xl">
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <CardTitle className="text-2xl flex items-center gap-3">
+                            <Rocket className="w-6 h-6" />
+                            AI Integration Quick Start
+                          </CardTitle>
+                          <CardDescription className="text-blue-100 mt-2">
+                            Start building AI-powered applications today with our hands-on tutorials
+                          </CardDescription>
+                        </div>
+                        <Link href="/learn/ai-integration">
+                          <Button className="bg-white text-blue-600 hover:bg-gray-100">
+                            View All Tutorials
+                            <ArrowRight className="w-4 h-4 ml-2" />
+                          </Button>
+                        </Link>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <Link href="/learn/ai-integration?tutorial=llm-basics">
+                          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/20 transition-colors cursor-pointer">
+                            <Brain className="w-8 h-8 mb-2" />
+                            <h3 className="font-semibold mb-1">LLM Integration</h3>
+                            <p className="text-sm text-blue-100">ChatGPT & OpenAI API</p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <Badge className="bg-green-500 text-white">Beginner</Badge>
+                              <span className="text-xs">45 min</span>
+                            </div>
+                          </div>
+                        </Link>
+                        <Link href="/learn/ai-integration?tutorial=tts">
+                          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/20 transition-colors cursor-pointer">
+                            <Volume2 className="w-8 h-8 mb-2" />
+                            <h3 className="font-semibold mb-1">Text-to-Speech</h3>
+                            <p className="text-sm text-blue-100">Voice Generation</p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <Badge className="bg-green-500 text-white">Beginner</Badge>
+                              <span className="text-xs">30 min</span>
+                            </div>
+                          </div>
+                        </Link>
+                        <Link href="/learn/ai-integration?tutorial=vlm">
+                          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/20 transition-colors cursor-pointer">
+                            <Eye className="w-8 h-8 mb-2" />
+                            <h3 className="font-semibold mb-1">Vision AI</h3>
+                            <p className="text-sm text-blue-100">Image Analysis</p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <Badge className="bg-yellow-500 text-white">Intermediate</Badge>
+                              <span className="text-xs">50 min</span>
+                            </div>
+                          </div>
+                        </Link>
+                        <Link href="/learn/ai-integration?tutorial=agents">
+                          <div className="bg-white/10 backdrop-blur-sm rounded-lg p-4 hover:bg-white/20 transition-colors cursor-pointer">
+                            <Cpu className="w-8 h-8 mb-2" />
+                            <h3 className="font-semibold mb-1">AI Agents</h3>
+                            <p className="text-sm text-blue-100">Automation & More</p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <Badge className="bg-red-500 text-white">Advanced</Badge>
+                              <span className="text-xs">90 min</span>
+                            </div>
+                          </div>
+                        </Link>
+                      </div>
                     </CardContent>
                   </Card>
                 </div>
 
                 {/* Learning Progress Overview */}
-                <div
-                  className="lg:col-span-3"
-                >
+                <div className="lg:col-span-3">
                   <LearningProgressCard
                     paths={learningPaths}
                     onPathSelect={handlePathSelect}
