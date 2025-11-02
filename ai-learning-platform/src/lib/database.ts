@@ -126,8 +126,8 @@ function createDatabaseProxy() {
   })
 }
 
-// Export the proxied database
-export const prisma = createDatabaseProxy()
+// Direct Prisma client export
+export const prisma = prismaInstance || (useMockDB ? mockDatabase : null)
 
 // Keep backward compatibility
 export const oldPrisma = prismaInstance
