@@ -5,37 +5,184 @@ const getDatabaseUrl = () => {
 
 declare global {
   var prisma: any | undefined
+  var useMockDatabase: boolean | undefined
 }
 
 // Simple Prisma client initialization
 const databaseUrl = getDatabaseUrl()
 
 if (!databaseUrl) {
-  console.warn('No database URL found. Please set DATABASE_URL or PRISMA_DATABASE_URL environment variable.')
+  console.warn('⚠️ No database URL found. Using mock database for development.')
+  global.useMockDatabase = true
 }
 
 // Initialize Prisma client - use require for compatibility
 let PrismaClient: any
+let prismaInstance: any = null
+let useMockDB = false
+
 try {
-  const prismaClientModule = require('@prisma/client')
-  PrismaClient = prismaClientModule.PrismaClient || prismaClientModule.default
-} catch (error) {
-  console.error('Failed to import PrismaClient:', error)
-  PrismaClient = null
-}
-
-export const prisma = global.prisma || (PrismaClient ? new PrismaClient({
-  datasources: databaseUrl ? {
-    db: {
-      url: databaseUrl
+  if (databaseUrl && databaseUrl !== 'postgresql://username:password@localhost:5432/ai_learning_platform') {
+    const prismaClientModule = require('@prisma/client')
+    PrismaClient = prismaClientModule.PrismaClient || prismaClientModule.default
+    
+    prismaInstance = global.prisma || new PrismaClient({
+      datasources: {
+        db: {
+          url: databaseUrl
+        }
+      },
+      log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    })
+    
+    if (process.env.NODE_ENV !== 'production') {
+      global.prisma = prismaInstance
     }
-  } : undefined,
-  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-}) : null)
-
-if (process.env.NODE_ENV !== 'production' && prisma) {
-  global.prisma = prisma
+  } else {
+    useMockDB = true
+    console.log('🔧 Using mock database for development')
+  }
+} catch (error) {
+  console.error('⚠️ Failed to connect to database. Using mock database:', error)
+  useMockDB = true
 }
+
+// Import mock database if needed
+let mockDatabase: any = null
+if (useMockDB) {
+  try {
+    const { mockDatabase: mockDB } = require('./mock-database')
+    mockDatabase = mockDB
+  } catch (error) {
+    console.error('Failed to load mock database:', error)
+  }
+}
+
+// Export prisma with connection check
+export const prisma = {
+  user: {
+    findFirst: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.user.findFirst(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.user.findFirst(...args)
+    },
+    findMany: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.user.findMany(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.user.findMany(...args)
+    },
+    create: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.user.create(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.user.create(...args)
+    },
+    upsert: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.user.upsert(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.user.upsert(...args)
+    },
+    findUnique: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.user.findUnique(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.user.findUnique(...args)
+    },
+    update: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.user.update(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.user.update(...args)
+    }
+  },
+  account: {
+    create: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.account.create(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.account.create(...args)
+    },
+    findFirst: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.account.findFirst(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.account.findFirst(...args)
+    }
+  },
+  session: {
+    create: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.session.create(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.session.create(...args)
+    }
+  },
+  profile: {
+    create: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.profile.create(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.profile.create(...args)
+    }
+  },
+  gameStats: {
+    create: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.gameStats.create(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.gameStats.create(...args)
+    }
+  },
+  preferences: {
+    create: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.preferences.create(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.preferences.create(...args)
+    }
+  },
+  achievement: {
+    findMany: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.achievement.findMany(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.achievement.findMany(...args)
+    },
+    upsert: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.achievement.upsert(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.achievement.upsert(...args)
+    }
+  },
+  userAchievement: {
+    createMany: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.userAchievement.createMany(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.userAchievement.createMany(...args)
+    }
+  },
+  learningPath: {
+    upsert: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.learningPath.upsert(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.learningPath.upsert(...args)
+    }
+  },
+  progress: {
+    upsert: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.progress.upsert(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.progress.upsert(...args)
+    }
+  },
+  module: {
+    findMany: async (...args: any[]) => {
+      if (useMockDB && mockDatabase) return mockDatabase.module.findMany(...args)
+      if (!prismaInstance) throw new Error('Database not connected')
+      return prismaInstance.module.findMany(...args)
+    }
+  },
+  $disconnect: async () => {
+    if (useMockDB && mockDatabase) return mockDatabase.$disconnect()
+    if (prismaInstance) {
+      return prismaInstance.$disconnect()
+    }
+  }
+}
+
+// Keep backward compatibility
+export const oldPrisma = prismaInstance
+export { useMockDB }
 
 // Helper functions for common database operations
 export async function getUserById(id: string) {
