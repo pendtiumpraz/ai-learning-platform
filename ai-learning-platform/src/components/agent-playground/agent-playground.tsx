@@ -52,7 +52,7 @@ export function AgentPlayground({ agent, onShare }: AgentPlaygroundProps) {
   });
 
   const outputRef = useRef<HTMLDivElement>(null);
-  const stepIntervalRef = useRef<number | null>(null);
+  const stepIntervalRef = useRef<ReturnType<typeof setInterval> | number | null>(null);
 
   useEffect(() => {
     if (outputRef.current) {
