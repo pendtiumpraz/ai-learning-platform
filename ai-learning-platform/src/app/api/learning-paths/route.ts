@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/database'
 import jwt from 'jsonwebtoken'
 
 // Disable static optimization
@@ -22,6 +21,9 @@ async function getUserFromToken(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    // Dynamically import database client
+    const { prisma } = await import('@/lib/database')
+    
     const userId = await getUserFromToken(request)
 
     // Fetch all learning paths with user progress if authenticated

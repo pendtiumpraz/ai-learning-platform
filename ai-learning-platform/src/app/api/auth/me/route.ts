@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/database'
 import jwt from 'jsonwebtoken'
 
 // Disable static optimization
@@ -20,6 +19,9 @@ export async function GET(request: NextRequest) {
 
     // Verify and decode token
     const decoded = jwt.verify(token, JWT_SECRET) as { userId: string }
+
+    // Dynamically import database client
+    const { prisma } = await import('@/lib/database')
 
     // Fetch user with all related data
     const user = await prisma.user.findUnique({

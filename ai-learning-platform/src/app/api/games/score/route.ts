@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/database'
 import jwt from 'jsonwebtoken'
 
 // Disable static optimization
@@ -222,6 +221,9 @@ async function checkGameAchievements(userId: string, _gameType: string, score: n
 
 export async function POST(request: NextRequest) {
   try {
+    // Dynamically import database client
+    const { prisma } = await import('@/lib/database')
+    
     const userId = await getUserFromToken(request)
 
     if (!userId) {

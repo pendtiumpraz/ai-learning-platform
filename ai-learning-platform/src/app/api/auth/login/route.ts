@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
-import { prisma } from '@/lib/database'
 import { z } from 'zod'
 import jwt from 'jsonwebtoken'
 
@@ -28,6 +27,9 @@ export async function POST(request: NextRequest) {
     }
 
     const { email, password } = validation.data
+
+    // Dynamically import database client
+    const { prisma } = await import('@/lib/database')
 
     // Find user with their account
     const user = await prisma.user.findUnique({

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/database'
 import jwt from 'jsonwebtoken'
 
 // Disable static optimization
@@ -149,6 +148,9 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       )
     }
+
+    // Dynamically import database client
+    const { prisma } = await import('@/lib/database')
 
     const body = await request.json()
     const {
