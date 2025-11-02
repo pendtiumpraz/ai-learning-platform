@@ -3,28 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import { Play, Save, RotateCcw, Copy, CheckCircle, AlertCircle, Loader2 } from 'lucide-react';
-
-interface ModelParameters {
-  temperature: number;
-  maxTokens: number;
-  topP: number;
-  frequencyPenalty: number;
-  presencePenalty: number;
-  model: string;
-}
-
-interface ApiResponse {
-  choices: Array<{
-    text: string;
-    index: number;
-    finish_reason: string;
-  }>;
-  usage: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
-}
+import type { ModelParameters, GenerateResponse } from '@/types';
 
 export default function CodePlayground() {
   const [code, setCode] = useState(`// Your first LLM API call
@@ -46,7 +25,7 @@ const data = await response.json();
 console.log(data.choices[0].text);`);
 
   const [language, setLanguage] = useState('javascript');
-  const [response, setResponse] = useState<ApiResponse | null>(null);
+  const [response, setResponse] = useState<GenerateResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -91,7 +70,7 @@ console.log(data.choices[0].text);`);
       await new Promise(resolve => setTimeout(resolve, 2000));
 
       // Mock response for demonstration
-      const mockResponse: ApiResponse = {
+      const mockResponse: GenerateResponse = {
         choices: [
           {
             text: "I'm doing well, thank you for asking! I'm ready to help you with any questions or tasks you might have. How can I assist you today?",
@@ -103,7 +82,9 @@ console.log(data.choices[0].text);`);
           prompt_tokens: 8,
           completion_tokens: 32,
           total_tokens: 40
-        }
+        },
+        model: parameters.model,
+        created: Date.now()
       };
 
       setResponse(mockResponse);

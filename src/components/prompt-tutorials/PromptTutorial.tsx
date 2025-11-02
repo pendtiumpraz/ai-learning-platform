@@ -2,20 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Lightbulb, CheckCircle, Code, Play, RotateCcw, Eye } from 'lucide-react';
-
-interface TutorialStep {
-  id: string;
-  title: string;
-  content: string;
-  code?: string;
-  explanation?: string;
-  interactiveElement?: {
-    type: 'code-editor' | 'quiz' | 'demo';
-    config: any;
-  };
-  hints: string[];
-  isCompleted: boolean;
-}
+import type { TutorialStep } from '@/types';
 
 interface PromptTutorialProps {
   tutorialId: string;

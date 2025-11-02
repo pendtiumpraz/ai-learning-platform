@@ -3,9 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useGameStore } from '@/store/useGameStore';
 import { Trophy, Star, Lock, Sparkles, CheckCircle } from 'lucide-react';
+import type { Achievement } from '@/types';
 
 interface AchievementNotification {
-  achievement: any;
+  achievement: Achievement;
   show: boolean;
 }
 
