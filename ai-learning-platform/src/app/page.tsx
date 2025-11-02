@@ -39,15 +39,19 @@ export default function HomePage() {
     // Check if user is logged in and redirect accordingly
     const checkAuthStatus = async () => {
       try {
-        const response = await fetch('/api/auth/me')
-        if (response.ok) {
-          // User is logged in, redirect to dashboard
+        // Import the auth service dynamically to avoid SSR issues
+        const { authService } = await import('@/lib/auth')
+        
+        // Quick check from localStorage
+        if (authService.isAuthenticated()) {
+          console.log('🔍 [HOME-PAGE] User is authenticated, redirecting to dashboard')
           router.push('/dashboard')
+        } else {
+          console.log('🔍 [HOME-PAGE] User is not authenticated, staying on landing page')
         }
-        // If not logged in, stay on landing page
       } catch (error) {
         // User is not logged in, stay on landing page
-        console.log('User not authenticated')
+        console.log('🔍 [HOME-PAGE] Authentication check failed, staying on landing page:', error)
       }
     }
 
