@@ -73,8 +73,8 @@ const generateId = () => `mock_${Date.now()}_${Math.random().toString(36).substr
 
 export const mockDatabase = {
   user: {
-    async findFirst(where: any) {
-      const { OR, email, username } = where || {}
+    async findFirst(_where: any) {
+      const { OR, email, username } = _where || {}
       if (OR) {
         for (const condition of OR) {
           if (condition.email) {
@@ -96,7 +96,7 @@ export const mockDatabase = {
       return null
     },
 
-    async findMany(where?: any) {
+    async findMany(_where?: any) {
       return Array.from(mockUsers.values())
     },
 
@@ -232,7 +232,7 @@ export const mockDatabase = {
   },
 
   achievement: {
-    async findMany(where: any) {
+    async findMany(_where: any) {
       // Return mock achievements
       return [
         {
@@ -262,9 +262,17 @@ export const mockDatabase = {
       ]
     },
 
-    async count(where?: any) {
+    async count(_where?: any) {
       // Return count of mock achievements
       return 2 // We have 2 mock achievements
+    },
+
+    async create(data: any) {
+      // Mock create - just return mock achievement
+      return {
+        id: generateId(),
+        ...data
+      }
     },
 
     async upsert(data: any) {
@@ -304,7 +312,7 @@ export const mockDatabase = {
   },
 
   module: {
-    async findMany(where: any) {
+    async findMany(_where: any) {
       // Return empty modules array
       return []
     }
