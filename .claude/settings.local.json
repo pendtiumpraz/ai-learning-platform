@@ -1,4 +1,15 @@
 {
+  "env": {
+    "ANTHROPIC_BASE_URL": "https://api.minimax.io/anthropic",
+    "ANTHROPIC_AUTH_TOKEN": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiJHYWxpaCBQcmF6IiwiVXNlck5hbWUiOiJHYWxpaCBQcmF6IiwiQWNjb3VudCI6IiIsIlN1YmplY3RJRCI6IjE5MTE3NDgzMDMyNDI5MjQ1MjIiLCJQaG9uZSI6IiIsIkdyb3VwSUQiOiIxOTExNzQ4MzAzMjM4NzMwMjE4IiwiUGFnZU5hbWUiOiIiLCJNYWlsIjoicGVuZHRpdW1wcmF6QGdtYWlsLmNvbSIsIkNyZWF0ZVRpbWUiOiIyMDI1LTExLTAzIDA1OjQwOjI3IiwiVG9rZW5UeXBlIjoxLCJpc3MiOiJtaW5pbWF4In0.yXepQLMk5ejNAcR0z0vbvQs5Kp3BNPME3t1ZMgwoczlkwSV7iLU1PcJ4ppcypwJxyxNw4mjWFIiSSaZbJlETwV1Ap5Alp8aBMGgDH3pJE2oKgZkN4ysCgxPuuvOu8JgS2zvZxGOfodhzj4UbNeZRKU4hhjqyG887iaQGX4Xr5_KLHMGbV5iXWHVdwNu9cDr9jU3svEt5DYWflBZx1dHkTg4c1Uei5ZBMTSZ59oBRHkrWUdLdp3CpYKOJJjUjWFjc378Oe5RSPWGOmRNkyhodLGhObvrQCrj1lkU5DrlmJDiNL3GlKfp4b9_7u_i5pirdlijkyZuMe3u9-FPt70azYQ",
+    "API_TIMEOUT_MS": "3000000",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "ANTHROPIC_MODEL": "MiniMax-M2",
+    "ANTHROPIC_SMALL_FAST_MODEL": "MiniMax-M2",
+    "ANTHROPIC_DEFAULT_SONNET_MODEL": "MiniMax-M2",
+    "ANTHROPIC_DEFAULT_OPUS_MODEL": "MiniMax-M2",
+    "ANTHROPIC_DEFAULT_HAIKU_MODEL": "MiniMax-M2"
+  },
   "permissions": {
     "allow": [
       "Bash(rm:*)",
@@ -82,7 +93,14 @@
       "Bash(./node_modules/.bin/tsc:*)",
       "Bash(npx prisma generate:*)",
       "Bash(npx prisma db push:*)",
-      "Bash(npx tsx:*)"
+      "Bash(npx tsx:*)",
+      "Bash(PORT=3005 npm run dev:*)",
+      "Bash(PORT=3003 npm run dev:*)",
+      "Bash(npx next lint:*)",
+      "Bash(npx next build:*)",
+      "Bash(timeout 10s npm run dev:*)",
+      "Bash(timeout:*)",
+      "Read(//tmp/**)"
     ],
     "deny": []
   }

@@ -186,8 +186,8 @@ const audioConfig = {
                   <BookOpen className="w-6 h-6 text-blue-600" />
                 </div>
                 <div>
-                  <CardTitle>{currentLessonData.title}</CardTitle>
-                  <CardDescription>{currentLessonData.description}</CardDescription>
+                  <CardTitle>{currentLessonData?.title || 'No Lesson Available'}</CardTitle>
+                  <CardDescription>{currentLessonData?.description || 'Lesson content not found'}</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -196,7 +196,7 @@ const audioConfig = {
               <div>
                 <h3 className="text-lg font-semibold mb-3">Theory</h3>
                 <p className="text-muted-foreground leading-relaxed">
-                  {currentLessonData.content.theory}
+                  {currentLessonData?.content?.theory || 'No content available.'}
                 </p>
               </div>
 
@@ -204,11 +204,11 @@ const audioConfig = {
               <div>
                 <h3 className="text-lg font-semibold mb-3">Key Concepts</h3>
                 <div className="flex flex-wrap gap-2">
-                  {currentLessonData.content.concepts.map((concept) => (
+                  {currentLessonData?.content?.concepts?.map((concept) => (
                     <Badge key={concept} variant="outline">
                       {concept}
                     </Badge>
-                  ))}
+                  )) || <p className="text-sm text-muted-foreground">No concepts available</p>}
                 </div>
               </div>
 
