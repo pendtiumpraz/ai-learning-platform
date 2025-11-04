@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { AIProvider } from '@/types'
-import { Check, ChevronDown } from 'lucide-react'
+import { Check } from 'lucide-react'
 
 interface AIProviderOption {
   provider: AIProvider
