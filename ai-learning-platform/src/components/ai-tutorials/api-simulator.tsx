@@ -73,6 +73,47 @@ const API_CONFIGS: Record<string, APIConfig> = {
     },
     description: 'Generate conversational responses using OpenAI language models'
   },
+  'gemini-chat': {
+    name: 'Google Gemini 1.5 Pro',
+    endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': 'YOUR_API_KEY'
+    },
+    params: ['contents', 'generationConfig', 'safetySettings'],
+    exampleRequest: {
+      contents: [{
+        parts: [{ text: "Explain AI integration in web development" }]
+      }],
+      generationConfig: {
+        temperature: 0.7,
+        topK: 40,
+        topP: 0.95,
+        maxOutputTokens: 150
+      },
+      safetySettings: [
+        {
+          category: "HARM_CATEGORY_HARASSMENT",
+          threshold: "BLOCK_MEDIUM_AND_ABOVE"
+        }
+      ]
+    },
+    exampleResponse: {
+      candidates: [{
+        content: {
+          parts: [{ text: "AI integration in web development involves..." }]
+        },
+        finishReason: "STOP"
+      }],
+      usageMetadata: {
+        promptTokenCount: 25,
+        candidatesTokenCount: 45,
+        totalTokenCount: 70
+      }
+    },
+    description: 'Generate content using Google Gemini 1.5 Pro with multimodal support'
+  },
   'openai-image': {
     name: 'DALL-E Image Generation',
     endpoint: 'https://api.openai.com/v1/images/generations',
@@ -156,11 +197,48 @@ const API_CONFIGS: Record<string, APIConfig> = {
       }]
     },
     description: 'Analyze images using GPT-4 Vision capabilities'
+  },
+  'gemini-vision': {
+    name: 'Gemini Pro Vision',
+    endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-vision-latest:generateContent',
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': 'YOUR_API_KEY'
+    },
+    params: ['contents', 'generationConfig'],
+    exampleRequest: {
+      contents: [{
+        parts: [
+          { text: "What's in this image?" },
+          {
+            inline_data: {
+              mime_type: "image/jpeg",
+              data: "base64_encoded_image_data"
+            }
+          }
+        ]
+      }],
+      generationConfig: {
+        temperature: 0.4,
+        topK: 32,
+        topP: 1,
+        maxOutputTokens: 1024
+      }
+    },
+    exampleResponse: {
+      candidates: [{
+        content: {
+          parts: [{ text: "The image shows a modern computer setup with multiple monitors, a mechanical keyboard, and a gaming mouse..." }]
+        }
+      }]
+    },
+    description: 'Analyze images and text using Gemini Pro Vision'
   }
 };
 
 export default function APISimulator() {
-  const [selectedAPI, setSelectedAPI] = useState<string>('openai-chat');
+  const [selectedAPI, setSelectedAPI] = useState<string>('gemini-chat');
   const [requestBody, setRequestBody] = useState<string>('');
   const [response, setResponse] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -199,6 +277,18 @@ export default function APISimulator() {
 
 const data = await response.json();
 console.log(data.choices[0].message.content);`;
+        } else if (selectedAPI === 'gemini-chat' || selectedAPI === 'gemini-vision') {
+          return `const response = await fetch('${config?.endpoint || ''}', {
+  method: '${config?.method || 'POST'}',
+  headers: {
+    'Content-Type': 'application/json',
+    'x-goog-api-key': 'YOUR_API_KEY'
+  },
+  body: JSON.stringify(${requestBody})
+});
+
+const data = await response.json();
+console.log(data.candidates[0].content.parts[0].text);`;
         } else if (selectedAPI === 'elevenlabs-tts') {
           return `const response = await fetch('${config?.endpoint?.replace('{voice_id}', 'voice-id') || ''}', {
   method: '${config?.method || 'POST'}',
@@ -240,6 +330,20 @@ response = client.chat.completions.create(
 )
 
 print(response.choices[0].message.content)`;
+        } else if (selectedAPI === 'gemini-chat' || selectedAPI === 'gemini-vision') {
+          return `import requests
+import json
+
+url = '${config.endpoint}'
+headers = {
+    'Content-Type': 'application/json',
+    'x-goog-api-key': 'YOUR_API_KEY'
+}
+data = ${requestBody}
+
+response = requests.post(url, headers=headers, json=data)
+result = response.json()
+print(result['candidates'][0]['content']['parts'][0]['text'])`;
         }
         return `import requests
 
@@ -251,6 +355,12 @@ response = requests.post(url, headers=headers, json=data)
 print(response.json())`;
 
       case 'curl':
+        if (selectedAPI === 'gemini-chat' || selectedAPI === 'gemini-vision') {
+          return `curl -X ${config.method} '${config.endpoint}' \\
+-H 'Content-Type: application/json' \\
+-H 'x-goog-api-key: YOUR_API_KEY' \\
+-d '${requestBody.replace(/"/g, '\\"')}'`;
+        }
         return `curl -X ${config.method} '${config.endpoint}' \\
 -H 'Content-Type: application/json' \\
 -H 'Authorization: Bearer YOUR_API_KEY' \\

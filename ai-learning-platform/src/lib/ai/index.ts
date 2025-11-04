@@ -78,7 +78,9 @@ export class AIService {
     topic: string,
     difficultyLevel: string,
     learningStyle?: string,
-    context?: LearningContext
+    context?: LearningContext,
+    provider: AIProvider = 'openrouter',
+    model?: string
   ): Promise<AIResponse> {
     const prompt = `Generate a comprehensive explanation about "${topic}" for ${difficultyLevel.toLowerCase()} level students.
     ${learningStyle ? `Optimize the explanation for ${learningStyle} learners.` : ''}
@@ -96,8 +98,8 @@ export class AIService {
       type: 'explanation',
       context: context || {} as LearningContext,
       prompt,
-      provider: 'openrouter',
-      model: 'anthropic/claude-3-sonnet'
+      provider,
+      model: model || this.getDefaultModel(provider)
     })
   }
 
@@ -105,7 +107,9 @@ export class AIService {
     topic: string,
     difficultyLevel: string,
     questionCount: number = 5,
-    questionType: 'multiple_choice' | 'short_answer' | 'essay' = 'multiple_choice'
+    questionType: 'multiple_choice' | 'short_answer' | 'essay' = 'multiple_choice',
+    provider: AIProvider = 'openrouter',
+    model?: string
   ): Promise<AIResponse> {
     const prompt = `Generate ${questionCount} ${questionType.replace('_', ' ')} practice questions about "${topic}" at ${difficultyLevel} level.
 
@@ -129,15 +133,17 @@ export class AIService {
       type: 'question',
       context: {} as LearningContext,
       prompt,
-      provider: 'openrouter',
-      model: 'anthropic/claude-3-sonnet'
+      provider,
+      model: model || this.getDefaultModel(provider)
     })
   }
 
   async generatePersonalizedRecommendations(
     userProgress: Record<string, any>,
     learningGoals: string[],
-    recentActivity: Record<string, any>[]
+    recentActivity: Record<string, any>[],
+    provider: AIProvider = 'openrouter',
+    model?: string
   ): Promise<AIResponse> {
     const prompt = `Based on the following student data, generate personalized learning recommendations:
 
@@ -168,15 +174,17 @@ export class AIService {
       type: 'content_generation',
       context: {} as LearningContext,
       prompt,
-      provider: 'openrouter',
-      model: 'anthropic/claude-3-sonnet'
+      provider,
+      model: model || this.getDefaultModel(provider)
     })
   }
 
   async generateFeedback(
     submission: string,
     rubric: Record<string, any>,
-    question: string
+    question: string,
+    provider: AIProvider = 'openrouter',
+    model?: string
   ): Promise<AIResponse> {
     const prompt = `Provide constructive feedback on the following student submission:
 
@@ -204,15 +212,17 @@ export class AIService {
       type: 'feedback',
       context: {} as LearningContext,
       prompt,
-      provider: 'openrouter',
-      model: 'anthropic/claude-3-sonnet'
+      provider,
+      model: model || this.getDefaultModel(provider)
     })
   }
 
   async generateTutoringResponse(
     question: string,
     conversationHistory: Array<{ role: string; content: string }>,
-    context: LearningContext
+    context: LearningContext,
+    provider: AIProvider = 'openrouter',
+    model?: string
   ): Promise<AIResponse> {
     const historyPrompt = conversationHistory
       .map(msg => `${msg.role}: ${msg.content}`)
@@ -245,15 +255,17 @@ export class AIService {
       type: 'tutoring',
       context,
       prompt,
-      provider: 'openrouter',
-      model: 'anthropic/claude-3-sonnet'
+      provider,
+      model: model || this.getDefaultModel(provider)
     })
   }
 
   async generateContentSummary(
     content: string,
     contentType: 'lesson' | 'article' | 'video_transcript',
-    targetLength: 'short' | 'medium' | 'long' = 'medium'
+    targetLength: 'short' | 'medium' | 'long' = 'medium',
+    provider: AIProvider = 'openrouter',
+    model?: string
   ): Promise<AIResponse> {
     const lengthGuidelines = {
       short: '2-3 sentences',
@@ -278,8 +290,8 @@ export class AIService {
       type: 'content_generation',
       context: {} as LearningContext,
       prompt,
-      provider: 'openrouter',
-      model: 'anthropic/claude-3-sonnet'
+      provider,
+      model: model || this.getDefaultModel(provider)
     })
   }
 
@@ -317,6 +329,17 @@ export class AIService {
 
   private generateId(): string {
     return Math.random().toString(36).substring(2) + Date.now().toString(36)
+  }
+
+  private getDefaultModel(provider: AIProvider): string {
+    const defaultModels: Record<AIProvider, string> = {
+      'openrouter': 'anthropic/claude-3-sonnet',
+      'gemini': 'gemini-1.5-pro',
+      'openai': 'gpt-4-turbo',
+      'z_ai': 'zai-gpt-4',
+      'claude': 'claude-3-sonnet'
+    }
+    return defaultModels[provider] || 'anthropic/claude-3-sonnet'
   }
 
   // Health check for all providers
