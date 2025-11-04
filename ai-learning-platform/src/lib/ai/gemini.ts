@@ -35,10 +35,15 @@ class GeminiClient {
         throw createError('Invalid Gemini API key', 'INVALID_API_KEY')
       }
 
-      const model = this.genAI.getGenerativeModel({
+      const modelConfig: any = {
         model: modelName || this.config.model || 'gemini-1.5-pro',
-        safetySettings: this.config.safetySettings
-      })
+      }
+
+      if (this.config.safetySettings) {
+        modelConfig.safetySettings = this.config.safetySettings
+      }
+
+      const model = this.genAI.getGenerativeModel(modelConfig)
 
       const result = await model.generateContent(prompt)
       const response = await result.response
